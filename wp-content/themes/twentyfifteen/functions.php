@@ -329,3 +329,37 @@ require get_template_directory() . '/inc/template-tags.php';
  * @since Twenty Fifteen 1.0
  */
 require get_template_directory() . '/inc/customizer.php';
+
+//========================
+
+function add_custom_fields( $user ) {
+?>
+	<h3>Additional Fields</h3>
+	<table class="form-table">
+		<tr>
+			<th><label for="college-attended">College Attended</label></th>
+			<td><input type="text" id="college-attended" name="college-attended" value="<?php echo esc_attr( get_the_author_meta( 'college-attended', $user->ID ) ); ?>" class="regular-text" /></td>
+		</tr>
+		<tr>
+			<th><label for="year-graduation">Year of Graduation</label></th>
+			<td><input type="text" id="year-graduation" name="year-graduation" value="<?php echo esc_attr( get_the_author_meta( 'year-graduation', $user->ID ) ); ?>" class="regular-text" /></td>
+		</tr>
+	</table>
+<?php
+}
+
+add_action( 'show_user_profile', 'add_custom_fields' );
+add_action( 'edit_user_profile', 'add_custom_fields' );
+
+function save_custom_fields( $user_id ) {
+	update_user_meta( $user_id, 'college-attended', sanitize_text_field( $_POST['college-attended'] ) );
+	update_user_meta( $user_id, 'year-graduation', sanitize_text_field( $_POST['year-graduation'] ) );
+}
+
+add_action( 'personal_options_update', save_custom_fields );
+add_action( 'edit_user_profile_update', save_custom_fields );
+
+?>
+
+<?php
+//========================
