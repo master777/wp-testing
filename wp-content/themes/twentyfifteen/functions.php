@@ -332,19 +332,19 @@ require get_template_directory() . '/inc/customizer.php';
 
 //========================
 
-function add_custom_fields( $user ) {
-	/*
-	echo "USER:";
-	echo "<pre>";
-	print_r($user);
-	echo "</pre>";
-	*/
+function add_custom_scripts() {
+	wp_enqueue_style( 'jquery.tokenize.css', get_template_directory_uri() . '/css/jquery.tokenize.css' );
+	wp_enqueue_script( 'jquery.tokenize.js', get_template_directory_uri() . '/js/jquery.tokenize.js' );
+	wp_enqueue_script( 'custom_script.js', get_template_directory_uri() . '/js/custom_script.js' );
+}
 
-	//$public_profile_url = home_url() . "/" . $user->data['user_nicename'];
-	//echo "USER_NICENAME : ". $user->user_nicename . "<br/>";
-	$public_profile_url = site_url() . "/profile/" . $user->user_nicename;
-	//echo $public_profile_url;
+add_action( 'admin_enqueue_scripts', 'add_custom_scripts' );
+
+function add_custom_fields( $user ) {
+	
+	$public_profile_url = site_url() . "/profile/" . $user->user_nicename;	
 ?>
+
 	<!--h3>Additional Fields</h3-->
 	<table class="form-table">
 		<tbody>
@@ -377,7 +377,18 @@ function add_custom_fields( $user ) {
 			</tr>
 			<tr>
 				<th><label for="main-skills">What are your main skills?</label><p class="description">(Up to 5)</p></th>
-				<td><input type="text" id="main-skills" name="main-skills" value="<?php echo esc_attr( get_the_author_meta( 'main-skills', $user->ID ) ); ?>" class="regular-text" /></td>
+				<!--td><input type="text" id="main-skills" name="main-skills" value="<?php echo esc_attr( get_the_author_meta( 'main-skills', $user->ID ) ); ?>" class="regular-text" /></td-->
+				<td>
+					<!--div style="width: 25em">
+					</div-->
+					<select id="tokenize" multiple="multiple" class="tokenize-sample">
+				    <option value="1">Dave</option>
+				    <option value="2">Paul</option>
+				    <option value="3">Michel</option>
+				    <option value="4">Anna</option>
+				    <option value="5">Eleanor</option>
+					</select>
+				</td>				
 			</tr>
 			<tr>
 				<th><label for="target-industries">What are your target industries?</label><p class="description">(Up to 5)</p></th>
