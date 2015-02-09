@@ -333,17 +333,113 @@ require get_template_directory() . '/inc/customizer.php';
 //========================
 
 function add_custom_fields( $user ) {
+	/*
+	echo "USER:";
+	echo "<pre>";
+	print_r($user);
+	echo "</pre>";
+	*/
+
+	//$public_profile_url = home_url() . "/" . $user->data['user_nicename'];
+	//echo "USER_NICENAME : ". $user->user_nicename . "<br/>";
+	$public_profile_url = site_url() . "/profile/" . $user->user_nicename;
+	//echo $public_profile_url;
 ?>
-	<h3>Additional Fields</h3>
+	<!--h3>Additional Fields</h3-->
 	<table class="form-table">
-		<tr>
-			<th><label for="college-attended">College Attended</label></th>
-			<td><input type="text" id="college-attended" name="college-attended" value="<?php echo esc_attr( get_the_author_meta( 'college-attended', $user->ID ) ); ?>" class="regular-text" /></td>
-		</tr>
-		<tr>
-			<th><label for="year-graduation">Year of Graduation</label></th>
-			<td><input type="text" id="year-graduation" name="year-graduation" value="<?php echo esc_attr( get_the_author_meta( 'year-graduation', $user->ID ) ); ?>" class="regular-text" /></td>
-		</tr>
+		<tbody>
+			<tr>
+				<th><label for="college-attended">College Attended</label></th>
+				<td><input type="text" id="college-attended" name="college-attended" value="<?php echo esc_attr( get_the_author_meta( 'college-attended', $user->ID ) ); ?>" class="regular-text" /></td>
+			</tr>
+			<tr>
+				<th><label for="year-graduation">Year of Graduation</label></th>
+				<td><input type="text" id="year-graduation" name="year-graduation" value="<?php echo esc_attr( get_the_author_meta( 'year-graduation', $user->ID ) ); ?>" class="regular-text" /></td>
+			</tr>
+			<tr>
+				<th>Public Profile URL<p class="description">(Not editable)</p></th>
+				<td>
+					<a href="<?php echo $public_profile_url; ?>" target="_blank"><?php echo $public_profile_url; ?></a>
+				</td>
+			</tr>
+		</tbody>
+	</table>
+	<h3>Career Background</h3>
+	<table class="form-table">
+		<tbody>
+			<tr>
+				<th><label for="job-title">Current Job Title</label></th>
+				<td><input type="text" id="job-title" name="job-title" value="<?php echo esc_attr( get_the_author_meta( 'job-title', $user->ID ) ); ?>" class="regular-text" /></td>
+			</tr>
+			<tr>
+				<th><label for="job-company">Current Job Company</label></th>
+				<td><input type="text" id="job-company" name="job-company" value="<?php echo esc_attr( get_the_author_meta( 'job-company', $user->ID ) ); ?>" class="regular-text" /></td>
+			</tr>
+			<tr>
+				<th><label for="main-skills">What are your main skills?</label><p class="description">(Up to 5)</p></th>
+				<td><input type="text" id="main-skills" name="main-skills" value="<?php echo esc_attr( get_the_author_meta( 'main-skills', $user->ID ) ); ?>" class="regular-text" /></td>
+			</tr>
+			<tr>
+				<th><label for="target-industries">What are your target industries?</label><p class="description">(Up to 5)</p></th>
+				<td><input type="text" id="target-industries" name="target-industries" value="<?php echo esc_attr( get_the_author_meta( 'target-industries', $user->ID ) ); ?>" class="regular-text" /></td>
+			</tr>
+		</tbody>
+	</table>
+	<h3>Demographic Info</h3>
+	<table class="form-table">
+		<tbody>
+			<tr>
+				<th><label for="age">Age</label></th>
+				<td><input type="text" id="age" name="age" value="<?php echo esc_attr( get_the_author_meta( 'age', $user->ID ) ); ?>" class="regular-text" /></td>
+			</tr>
+			<tr>
+				<th><label for="ethnicity">Ethnicity</label></th>
+				<td><input type="text" id="ethnicity" name="ethnicity" value="<?php echo esc_attr( get_the_author_meta( 'ethnicity', $user->ID ) ); ?>" class="regular-text" /></td>
+			</tr>
+			<tr>
+				<th><label for="social-media-platform">Which social media platform do you use on a daily basis?</label></th>
+				<td><input type="text" id="social-media-platform" name="social-media-platform" value="<?php echo esc_attr( get_the_author_meta( 'social-media-platform', $user->ID ) ); ?>" class="regular-text" /></td>
+			</tr>
+		</tbody>
+	<h3>(Only Premium Members)</h3>
+	<table class="form-table">
+		<tbody>
+			<tr>
+				<th><label for="resume">Upload Resume</label></th>
+				<td><input type="text" id="resume" name="resume" value="<?php echo esc_attr( get_the_author_meta( 'resume', $user->ID ) ); ?>" class="regular-text" /></td>
+			</tr>
+			<tr>
+				<th><label for="contac-me">Contact me</label></th>
+				<td><input type="text" id="contac-me" name="contac-me" value="<?php echo esc_attr( get_the_author_meta( 'contac-me', $user->ID ) ); ?>" class="regular-text" /></td>
+			</tr>
+		</tbody>
+	</table>
+	<h3>Privacity Settings</h3>
+	<table class="form-table">
+		<tbody>
+			<tr>
+				<th><label for="public-profile-status">Public Profile</label></th>
+				<td>
+					<input type="radio" id="public-profile-status" name="public-profile-status" value="0" <?php echo esc_attr( get_the_author_meta( 'public-profile-status', $user->ID ) ) == 0 ? 'checked="checked"' : '' ; ?> />Everyone can view my profile<br/>
+					<input type="radio" id="public-profile-status" name="public-profile-status" value="1" <?php echo esc_attr( get_the_author_meta( 'public-profile-status', $user->ID ) ) == 1 ? 'checked="checked"' : '' ; ?> />Only FindSpark members can view my profile<br/>
+					<?php if (true) { // TODO: Restringir las ultimas opciones para que esten disponibles SOLO para miembros premium ?>
+					<input type="radio" id="public-profile-status" name="public-profile-status" value="2" <?php echo esc_attr( get_the_author_meta( 'public-profile-status', $user->ID ) ) == 2 ? 'checked="checked"' : '' ; ?> />Only FindSpark employers can view my profile<br/>
+					<input type="radio" id="public-profile-status" name="public-profile-status" value="3" <?php echo esc_attr( get_the_author_meta( 'public-profile-status', $user->ID ) ) == 3 ? 'checked="checked"' : '' ; ?> />FindSpark members &amp; employers can view my profile<br/>
+					<?php } ?>
+				</td>
+			</tr>
+			<tr>
+				<th><label for="contact-me-status">Contact me</label></th>
+				<td>
+					<input type="radio" id="contact-me-status" name="contact-me-status" value="0" <?php echo esc_attr( get_the_author_meta( 'contact-me-status', $user->ID ) ) == 0 ? 'checked="checked"' : '' ; ?> />Everyone can contact me<br/>
+					<input type="radio" id="contact-me-status" name="contact-me-status" value="1" <?php echo esc_attr( get_the_author_meta( 'contact-me-status', $user->ID ) ) == 1 ? 'checked="checked"' : '' ; ?> />Only FindSpark members can contact me<br/>
+					<?php if (true) { // TODO: Restringir las ultimas opciones para que esten disponibles SOLO para miembros premium ?>
+					<input type="radio" id="contact-me-status" name="contact-me-statuss" value="2" <?php echo esc_attr( get_the_author_meta( 'contact-me-status', $user->ID ) ) == 2 ? 'checked="checked"' : '' ; ?> />Only FindSpark employers can contact me<br/>
+					<input type="radio" id="contact-me-status" name="contact-me-status" value="3" <?php echo esc_attr( get_the_author_meta( 'contact-me-status', $user->ID ) ) == 3 ? 'checked="checked"' : '' ; ?> />FindSpark members &amp; employers can contact me<br/>
+					<?php } ?>
+				</td>
+			</tr>
+		</tbody>
 	</table>
 <?php
 }
