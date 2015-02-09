@@ -396,22 +396,23 @@ function add_custom_fields( $user ) {
 				<th><label for="ethnicity">Ethnicity</label></th>
 				<td><input type="text" id="ethnicity" name="ethnicity" value="<?php echo esc_attr( get_the_author_meta( 'ethnicity', $user->ID ) ); ?>" class="regular-text" /></td>
 			</tr>
-			<tr>
+			<!--tr>
 				<th><label for="social-media-platform">Which social media platform do you use on a daily basis?</label></th>
 				<td><input type="text" id="social-media-platform" name="social-media-platform" value="<?php echo esc_attr( get_the_author_meta( 'social-media-platform', $user->ID ) ); ?>" class="regular-text" /></td>
-			</tr>
+			</tr-->
 		</tbody>
-	<h3>(Only Premium Members)</h3>
+	</table>
+	<!--h3>(Only Premium Members)</h3-->
 	<table class="form-table">
 		<tbody>
 			<tr>
 				<th><label for="resume">Upload Resume</label></th>
-				<td><input type="text" id="resume" name="resume" value="<?php echo esc_attr( get_the_author_meta( 'resume', $user->ID ) ); ?>" class="regular-text" /></td>
+				<td><input type="file" id="resume" name="resume" value="<?php echo esc_attr( get_the_author_meta( 'resume', $user->ID ) ); ?>" class="regular-text" /></td>
 			</tr>
-			<tr>
+			<!--tr>
 				<th><label for="contac-me">Contact me</label></th>
 				<td><input type="text" id="contac-me" name="contac-me" value="<?php echo esc_attr( get_the_author_meta( 'contac-me', $user->ID ) ); ?>" class="regular-text" /></td>
-			</tr>
+			</tr-->
 		</tbody>
 	</table>
 	<h3>Privacity Settings</h3>
