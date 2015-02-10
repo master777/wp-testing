@@ -25,6 +25,24 @@
  * @since Twenty Fifteen 1.0
  */
 
+//================
+
+// This allows a custom URL to public profiles
+function custom_profile_rules() {	
+	add_rewrite_tag('%user%', '([^&]+)');  
+  add_rewrite_rule(
+    '^profile/([^/]*)/?',
+    //'index.php?page_id=18250&user=$matches[1]', // '18250' is the ID of the "My Profile" page in the wp admin
+    'index.php?page_id=48&user=$matches[1]', // '18250' is the ID of the "My Profile" page in the wp admin
+    'top'
+	);
+
+	//flush_rewrite_rules(); // Once you get working, please comment this next line
+}
+add_action('init', 'custom_profile_rules', 10, 0);
+
+//================
+
 /**
  * Set the content width based on the theme's design and stylesheet.
  *
@@ -334,9 +352,14 @@ require get_template_directory() . '/inc/customizer.php';
 
 function add_custom_scripts( $hook ) {
 	if ( in_array( $hook, array( 'profile.php', 'user-edit.php' ) ) ) {
+		// Para la funcion de autocompletar
 		wp_enqueue_style( 'jquery.tokenize.css', get_template_directory_uri() . '/css/jquery.tokenize.css' );
 		wp_enqueue_script( 'jquery.tokenize.js', get_template_directory_uri() . '/js/jquery.tokenize.js' );
 		wp_enqueue_script( 'custom_script.js', get_template_directory_uri() . '/js/custom_script.js' );
+
+		// Para la subida de fotos
+		//wp_enqueue_media();
+    //wp_enqueue_script('shr-uploader', get_stylesheet_directory_uri().'/js/uploader.js', array('jquery'), false, true );
 	}
 }
 
@@ -379,11 +402,31 @@ function add_custom_fields( $user ) {
 
 		// Formamos la URL del perfil publico del usuario actual
 		$public_profile_url = site_url() . "/profile/" . $user->user_nicename;	
+
+		/*
+		// Para la subida de imagen de perfil
+		//$profile_pic = ($user !== 'add-new-user') ? get_user_meta($user->ID, 'shr_pic', true) : false; 
+		$profile_pic = get_user_meta($user->ID, 'shr_pic', true); 
+    if(!empty($profile_pic)) {
+    	$image = wp_get_attachment_image_src( $profile_pic, 'thumbnail' ); 
+    }
+    */
 ?>
 
-	<!--h3>Additional Fields</h3-->
+	<h3>Basic Info</h3>
 	<table class="form-table">
 		<tbody>
+			<!--tr>
+        <th>
+          <label for="image"><?php _e('Profile Image', 'shr') ?><p class="description">(it will only be shown in your public profile)</p></label>
+        </th>
+        <td>
+          <img id="shr-img" src="<?php echo !empty($profile_pic) ? $image[0] : ''; ?>" style="<?php echo empty($profile_pic) ? 'display:none; ' :'' ?>max-width: 100px; max-height: 100px;" />
+          <br/>
+          <input type="button" data-id="shr_image_id" data-src="shr-img" class="button shr-image" name="shr_image" id="shr-image" value="Upload" />
+          <input type="hidden" class="button" name="shr_image_id" id="shr_image_id" value="<?php echo !empty($profile_pic) ? $profile_pic : ''; ?>" />
+        </td>
+      </tr-->
 			<tr>
 				<th><label for="college-attended">College Attended</label></th>
 				<td><input type="text" id="college-attended" name="college-attended" value="<?php echo esc_attr( get_the_author_meta( 'college-attended', $user->ID ) ); ?>" class="regular-text" /></td>
@@ -511,6 +554,11 @@ function save_custom_fields( $user_id ) {
 		update_user_meta( $user_id, 'job-company', sanitize_text_field( $_POST['job-company'] ) );
 		update_user_meta( $user_id, 'main-skills', sanitize_text_field( implode( $delimiter_str, $_POST['main-skills'] ) ) );
 		update_user_meta( $user_id, 'target-industries', sanitize_text_field( implode( $delimiter_str, $_POST['target-industries'] ) ) );
+
+		//if( current_user_can('edit_users') ) {
+      //$profile_pic = empty($_POST['shr_image_id']) ? '' : $_POST['shr_image_id'];
+      //update_user_meta($user_id, 'shr_pic', $profile_pic);
+    //}
 	}
 }
 

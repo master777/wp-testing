@@ -1,4 +1,6 @@
-
+/**
+ * Inicializa la funciona de autocompletar para los campos del perfil.
+ */
 jQuery(document).ready(function() {
 	var autofill_fields = [ 'main-skills', 'target-industries' ];
 	// Activamos el "autofill" (autocompletado) para los campos de la lista
