@@ -332,17 +332,53 @@ require get_template_directory() . '/inc/customizer.php';
 
 //========================
 
-function add_custom_scripts() {
-	wp_enqueue_style( 'jquery.tokenize.css', get_template_directory_uri() . '/css/jquery.tokenize.css' );
-	wp_enqueue_script( 'jquery.tokenize.js', get_template_directory_uri() . '/js/jquery.tokenize.js' );
-	wp_enqueue_script( 'custom_script.js', get_template_directory_uri() . '/js/custom_script.js' );
+function add_custom_scripts( $hook ) {
+	if ( in_array( $hook, array( 'profile.php', 'user-edit.php' ) ) ) {
+		wp_enqueue_style( 'jquery.tokenize.css', get_template_directory_uri() . '/css/jquery.tokenize.css' );
+		wp_enqueue_script( 'jquery.tokenize.js', get_template_directory_uri() . '/js/jquery.tokenize.js' );
+		wp_enqueue_script( 'custom_script.js', get_template_directory_uri() . '/js/custom_script.js' );
+	}
 }
 
 add_action( 'admin_enqueue_scripts', 'add_custom_scripts' );
 
 function add_custom_fields( $user ) {
-	
-	$public_profile_url = site_url() . "/profile/" . $user->user_nicename;	
+	$is_job_seeker = false;
+	foreach ($user->roles as $role) {
+		if ( in_array( $role, array( 'subscriber', 'premiummember' ) ) ) {
+			$is_job_seeker = true;
+		}
+	}
+
+	if ($is_job_seeker) {
+		$delimiter_str = ",";
+
+		// Lista de elementos por defecto para el autocompletado
+
+		$default_skills_tags = array(
+			"Advertising", "Animation", "Architecture", "Art History", "Business", "Communications", "Computer Science/Engineering", "Creative Writing", "Entrepreneurship",
+			"Event Planning", "Fashion", "Fine Art", "Graphic Design", "Journalism", "Marketing", "Music", "Photography", "Production", "Product Design", "Public Relations",
+			"Publishing", "Social Media", "Theater", "TV / Film", "Undecided"
+		);
+
+		// Inicializamos los valores de cada campo con autocompletado
+
+		$main_skills = esc_attr( get_the_author_meta( 'main-skills', $user->ID ) );
+		if (!empty($main_skills)) {
+			$main_skills = explode($delimiter_str, $main_skills);
+		} else {
+			$main_skills = array();
+		}
+
+		$target_industries = esc_attr( get_the_author_meta( 'target-industries', $user->ID ) );
+		if (!empty($target_industries)) {
+			$target_industries = explode($delimiter_str, $target_industries);
+		} else {
+			$target_industries = array();
+		}
+
+		// Formamos la URL del perfil publico del usuario actual
+		$public_profile_url = site_url() . "/profile/" . $user->user_nicename;	
 ?>
 
 	<!--h3>Additional Fields</h3-->
@@ -368,31 +404,32 @@ function add_custom_fields( $user ) {
 	<table class="form-table">
 		<tbody>
 			<tr>
-				<th><label for="job-title">Current Job Title</label></th>
+				<th><label for="job-title">Current Job</label></th>
 				<td><input type="text" id="job-title" name="job-title" value="<?php echo esc_attr( get_the_author_meta( 'job-title', $user->ID ) ); ?>" class="regular-text" /></td>
 			</tr>
 			<tr>
-				<th><label for="job-company">Current Job Company</label></th>
+				<th><label for="job-company">Current Company</label></th>
 				<td><input type="text" id="job-company" name="job-company" value="<?php echo esc_attr( get_the_author_meta( 'job-company', $user->ID ) ); ?>" class="regular-text" /></td>
 			</tr>
 			<tr>
 				<th><label for="main-skills">What are your main skills?</label><p class="description">(Up to 5)</p></th>
-				<!--td><input type="text" id="main-skills" name="main-skills" value="<?php echo esc_attr( get_the_author_meta( 'main-skills', $user->ID ) ); ?>" class="regular-text" /></td-->
 				<td>
-					<!--div style="width: 25em">
-					</div-->
-					<select id="tokenize" multiple="multiple" class="tokenize-sample">
-				    <option value="1">Dave</option>
-				    <option value="2">Paul</option>
-				    <option value="3">Michel</option>
-				    <option value="4">Anna</option>
-				    <option value="5">Eleanor</option>
+					<select id="main-skills" name="main-skills[]" multiple="multiple" class="profile-field">
+						<?php foreach($default_skills_tags as $tag) { ?>
+							<option value="<?php echo $tag; ?>" <?php echo in_array($tag, $main_skills) ? 'selected="selected"' : ''; ?>><?php echo $tag; ?></option>
+						<?php } ?>
 					</select>
 				</td>				
 			</tr>
 			<tr>
 				<th><label for="target-industries">What are your target industries?</label><p class="description">(Up to 5)</p></th>
-				<td><input type="text" id="target-industries" name="target-industries" value="<?php echo esc_attr( get_the_author_meta( 'target-industries', $user->ID ) ); ?>" class="regular-text" /></td>
+				<td>
+					<select id="target-industries" name="target-industries[]" multiple="multiple" class="profile-field">
+						<?php foreach($default_skills_tags as $tag) { ?>
+							<option value="<?php echo $tag; ?>" <?php echo in_array($tag, $target_industries) ? 'selected="selected"' : ''; ?>><?php echo $tag; ?></option>
+						<?php } ?>
+					</select>
+				</td>
 			</tr>
 		</tbody>
 	</table>
@@ -420,10 +457,6 @@ function add_custom_fields( $user ) {
 				<th><label for="resume">Upload Resume</label></th>
 				<td><input type="file" id="resume" name="resume" value="<?php echo esc_attr( get_the_author_meta( 'resume', $user->ID ) ); ?>" class="regular-text" /></td>
 			</tr>
-			<!--tr>
-				<th><label for="contac-me">Contact me</label></th>
-				<td><input type="text" id="contac-me" name="contac-me" value="<?php echo esc_attr( get_the_author_meta( 'contac-me', $user->ID ) ); ?>" class="regular-text" /></td>
-			</tr-->
 		</tbody>
 	</table>
 	<h3>Privacity Settings</h3>
@@ -454,18 +487,35 @@ function add_custom_fields( $user ) {
 		</tbody>
 	</table>
 <?php
+	}
 }
 
 add_action( 'show_user_profile', 'add_custom_fields' );
 add_action( 'edit_user_profile', 'add_custom_fields' );
 
 function save_custom_fields( $user_id ) {
-	update_user_meta( $user_id, 'college-attended', sanitize_text_field( $_POST['college-attended'] ) );
-	update_user_meta( $user_id, 'year-graduation', sanitize_text_field( $_POST['year-graduation'] ) );
+	$is_job_seeker = false;
+	$user = get_userdata( $user_id );
+	foreach ($user->roles as $role) {
+		if (in_array($role, array('subscriber', 'premiummember'))) {
+			$is_job_seeker = true;
+		}
+	}
+
+	if ($is_job_seeker) {
+		$delimiter_str = ",";
+
+		update_user_meta( $user_id, 'college-attended', sanitize_text_field( $_POST['college-attended'] ) );
+		update_user_meta( $user_id, 'year-graduation', sanitize_text_field( $_POST['year-graduation'] ) );
+		update_user_meta( $user_id, 'job-title', sanitize_text_field( $_POST['job-title'] ) );
+		update_user_meta( $user_id, 'job-company', sanitize_text_field( $_POST['job-company'] ) );
+		update_user_meta( $user_id, 'main-skills', sanitize_text_field( implode( $delimiter_str, $_POST['main-skills'] ) ) );
+		update_user_meta( $user_id, 'target-industries', sanitize_text_field( implode( $delimiter_str, $_POST['target-industries'] ) ) );
+	}
 }
 
-add_action( 'personal_options_update', save_custom_fields );
-add_action( 'edit_user_profile_update', save_custom_fields );
+add_action( 'personal_options_update', 'save_custom_fields' );
+add_action( 'edit_user_profile_update', 'save_custom_fields' );
 
 ?>
 

@@ -1,19 +1,11 @@
 
 jQuery(document).ready(function() {
-  jQuery('#tokenize').tokenize();
-})
-
-
-/*
-$(function(){
-	$('#tokenize').tokenize();
+	var autofill_fields = [ 'main-skills', 'target-industries' ];
+	// Activamos el "autofill" (autocompletado) para los campos de la lista
+	jQuery.each( autofill_fields, function( index, value ){
+		jQuery('#' + value).tokenize({
+	  		maxElements: 5,
+	  		newElements: false
+	  });		
+	});
 });
-*/
-
-/*
-( function( $ ) {
-
-  $('#tokenize').tokenize();
-
-} )( jQuery );
-*/
