@@ -356,10 +356,6 @@ function add_custom_scripts( $hook ) {
 		wp_enqueue_style( 'jquery.tokenize.css', get_template_directory_uri() . '/css/jquery.tokenize.css' );
 		wp_enqueue_script( 'jquery.tokenize.js', get_template_directory_uri() . '/js/jquery.tokenize.js' );
 		wp_enqueue_script( 'custom_script.js', get_template_directory_uri() . '/js/custom_script.js' );
-
-		// Para la subida de fotos
-		//wp_enqueue_media();
-    //wp_enqueue_script('shr-uploader', get_stylesheet_directory_uri().'/js/uploader.js', array('jquery'), false, true );
 	}
 }
 
@@ -386,54 +382,61 @@ function add_custom_fields( $user ) {
 
 		// Inicializamos los valores de cada campo con autocompletado
 
-		$main_skills = esc_attr( get_the_author_meta( 'main-skills', $user->ID ) );
+		$main_skills = esc_attr( get_the_author_meta( 'main_skills', $user->ID ) );
 		if (!empty($main_skills)) {
 			$main_skills = explode($delimiter_str, $main_skills);
 		} else {
 			$main_skills = array();
 		}
 
-		$target_industries = esc_attr( get_the_author_meta( 'target-industries', $user->ID ) );
+		$target_industries = esc_attr( get_the_author_meta( 'target_industries', $user->ID ) );
 		if (!empty($target_industries)) {
 			$target_industries = explode($delimiter_str, $target_industries);
 		} else {
 			$target_industries = array();
 		}
 
-		// Formamos la URL del perfil publico del usuario actual
-		$public_profile_url = site_url() . "/profile/" . $user->user_nicename;	
+		$pic_data = get_user_meta( $user->ID, 'profile_pic', true );
 
 		/*
-		// Para la subida de imagen de perfil
-		//$profile_pic = ($user !== 'add-new-user') ? get_user_meta($user->ID, 'shr_pic', true) : false; 
-		$profile_pic = get_user_meta($user->ID, 'shr_pic', true); 
-    if(!empty($profile_pic)) {
-    	$image = wp_get_attachment_image_src( $profile_pic, 'thumbnail' ); 
-    }
-    */
+		echo "pic_data:";
+		echo "<pre>";
+		print_r($pic_data);
+		echo "</pre>";
+		*/		
+
+		if (!empty($pic_data) && !isset($pic_data['error']) /*&& file_exists($pic_data['file'])*/) {
+			$profile_pic_url = $pic_data['url'];
+		} else {
+			$profile_pic_url = get_template_directory_uri() . "/images/profile-default.png";
+		}
+
+		// Formamos la URL del perfil publico del usuario actual (formato: home/profile/username)
+		$public_profile_url = site_url() . "/profile/" . $user->user_nicename;
 ?>
 
 	<h3>Basic Info</h3>
 	<table class="form-table">
 		<tbody>
-			<!--tr>
-        <th>
-          <label for="image"><?php _e('Profile Image', 'shr') ?><p class="description">(it will only be shown in your public profile)</p></label>
-        </th>
-        <td>
-          <img id="shr-img" src="<?php echo !empty($profile_pic) ? $image[0] : ''; ?>" style="<?php echo empty($profile_pic) ? 'display:none; ' :'' ?>max-width: 100px; max-height: 100px;" />
-          <br/>
-          <input type="button" data-id="shr_image_id" data-src="shr-img" class="button shr-image" name="shr_image" id="shr-image" value="Upload" />
-          <input type="hidden" class="button" name="shr_image_id" id="shr_image_id" value="<?php echo !empty($profile_pic) ? $profile_pic : ''; ?>" />
-        </td>
-      </tr-->
 			<tr>
+      	<th>
+      		<label for="profile-pic"><?php _e('Profile Image', 'shr') ?><p class="description">(it will only be shown in your public profile)</p></label>
+      	</th>
+      	<td>      		
+          <img width="125px" height="125px" id="profile-pic-preview" src="<?php echo $profile_pic_url; ?>" alt="Your profile image" />
+        	<p>
+    				<input type="file" id="profile-pic" name="profile-pic" onchange="readURL(this);" />
+    			</p>
+          <p class="description">(Recommended 250x250 pixels)</p>
+      	</td>
+      </tr>
+      <tr>
 				<th><label for="college-attended">College Attended</label></th>
-				<td><input type="text" id="college-attended" name="college-attended" value="<?php echo esc_attr( get_the_author_meta( 'college-attended', $user->ID ) ); ?>" class="regular-text" /></td>
+				<td><input type="text" id="college-attended" name="college-attended" value="<?php echo esc_attr( get_the_author_meta( 'college_attended', $user->ID ) ); ?>" class="regular-text" /></td>
 			</tr>
 			<tr>
 				<th><label for="year-graduation">Year of Graduation</label></th>
-				<td><input type="text" id="year-graduation" name="year-graduation" value="<?php echo esc_attr( get_the_author_meta( 'year-graduation', $user->ID ) ); ?>" class="regular-text" /></td>
+				<td><input type="text" id="year-graduation" name="year-graduation" value="<?php echo esc_attr( get_the_author_meta( 'year_graduation', $user->ID ) ); ?>" class="regular-text" /></td>
 			</tr>
 			<tr>
 				<th>Public Profile URL<p class="description">(Not editable)</p></th>
@@ -448,11 +451,11 @@ function add_custom_fields( $user ) {
 		<tbody>
 			<tr>
 				<th><label for="job-title">Current Job</label></th>
-				<td><input type="text" id="job-title" name="job-title" value="<?php echo esc_attr( get_the_author_meta( 'job-title', $user->ID ) ); ?>" class="regular-text" /></td>
+				<td><input type="text" id="job-title" name="job-title" value="<?php echo esc_attr( get_the_author_meta( 'job_title', $user->ID ) ); ?>" class="regular-text" /></td>
 			</tr>
 			<tr>
 				<th><label for="job-company">Current Company</label></th>
-				<td><input type="text" id="job-company" name="job-company" value="<?php echo esc_attr( get_the_author_meta( 'job-company', $user->ID ) ); ?>" class="regular-text" /></td>
+				<td><input type="text" id="job-company" name="job-company" value="<?php echo esc_attr( get_the_author_meta( 'job_company', $user->ID ) ); ?>" class="regular-text" /></td>
 			</tr>
 			<tr>
 				<th><label for="main-skills">What are your main skills?</label><p class="description">(Up to 5)</p></th>
@@ -548,24 +551,44 @@ function save_custom_fields( $user_id ) {
 	if ($is_job_seeker) {
 		$delimiter_str = ",";
 
-		update_user_meta( $user_id, 'college-attended', sanitize_text_field( $_POST['college-attended'] ) );
-		update_user_meta( $user_id, 'year-graduation', sanitize_text_field( $_POST['year-graduation'] ) );
-		update_user_meta( $user_id, 'job-title', sanitize_text_field( $_POST['job-title'] ) );
-		update_user_meta( $user_id, 'job-company', sanitize_text_field( $_POST['job-company'] ) );
-		update_user_meta( $user_id, 'main-skills', sanitize_text_field( implode( $delimiter_str, $_POST['main-skills'] ) ) );
-		update_user_meta( $user_id, 'target-industries', sanitize_text_field( implode( $delimiter_str, $_POST['target-industries'] ) ) );
+		update_user_meta( $user_id, 'college_attended', sanitize_text_field( $_POST['college-attended'] ) );
+		update_user_meta( $user_id, 'year_graduation', sanitize_text_field( $_POST['year-graduation'] ) );
+		update_user_meta( $user_id, 'job_title', sanitize_text_field( $_POST['job-title'] ) );
+		update_user_meta( $user_id, 'job_company', sanitize_text_field( $_POST['job-company'] ) );
+		update_user_meta( $user_id, 'main_skills', sanitize_text_field( implode( $delimiter_str, $_POST['main-skills'] ) ) );
+		update_user_meta( $user_id, 'target_industries', sanitize_text_field( implode( $delimiter_str, $_POST['target-industries'] ) ) );
 
-		//if( current_user_can('edit_users') ) {
-      //$profile_pic = empty($_POST['shr_image_id']) ? '' : $_POST['shr_image_id'];
-      //update_user_meta($user_id, 'shr_pic', $profile_pic);
-    //}
+		if( $_FILES['profile-pic']['error'] === UPLOAD_ERR_OK ) {
+			/*
+			// Obtenemos el tipo del archivo subido. Esto es retornado como "type/extension"
+			$arr_file_type = wp_check_filetype(basename($_FILES['profile-pic']['name']));
+			$uploaded_file_type = $arr_file_type['type'];
+
+			// Lista de formatos aceptados
+			$allowed_file_types = array('image/jpg','image/jpeg','image/gif','image/png');
+			if(in_array($uploaded_file_type, $allowed_file_types)) {
+
+			}
+			*/
+
+			// La subida siempre fallara si no se pone esto: 'test_form' => false
+			$upload_overrides = array( 'test_form' => false );
+			// Subimos la imagen mediante wordpress (la guarda en wp-contents/uploads)
+		 	$img = wp_handle_upload( $_FILES['profile-pic'], $upload_overrides );
+		 	// Actualizamos la informacion del campo respectivo
+			update_user_meta( $user_id, 'profile_pic', $img );
+		}
 	}
 }
 
 add_action( 'personal_options_update', 'save_custom_fields' );
 add_action( 'edit_user_profile_update', 'save_custom_fields' );
 
-?>
+function make_form_accept_uploads() {
+	// Para poder subir archivos en el formulario del profile, se debe agregar la siguiente propiedad:
+	echo ' enctype="multipart/form-data"';
+}
 
-<?php
+add_action('user_edit_form_tag', 'make_form_accept_uploads');
+
 //========================
