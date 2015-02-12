@@ -352,10 +352,17 @@ require get_template_directory() . '/inc/customizer.php';
 
 function add_custom_scripts( $hook ) {
 	if ( in_array( $hook, array( 'profile.php', 'user-edit.php' ) ) ) {
-		// Para la funcion de autocompletar
+		// Para crear variables javascript equivalentes a las obtenidas mediante PHP:
+		wp_register_script( 'custom_script.js', get_template_directory_uri() . '/js/custom_script.js');
+		$var_list = array( 
+			'template_url' => get_template_directory_uri()
+		);
+		wp_localize_script( 'custom_script.js', 'WPURLS', $var_list );
+
+		// Para la funcion de autocompletar:
 		wp_enqueue_style( 'jquery.tokenize.css', get_template_directory_uri() . '/css/jquery.tokenize.css' );
 		wp_enqueue_script( 'jquery.tokenize.js', get_template_directory_uri() . '/js/jquery.tokenize.js' );
-		wp_enqueue_script( 'custom_script.js', get_template_directory_uri() . '/js/custom_script.js' );
+		wp_enqueue_script( 'custom_script.js' ); // No ingresamos el segundo paramentro porque ya se lo especifico en wp_register_script
 	}
 }
 
@@ -490,10 +497,6 @@ function add_custom_fields( $user ) {
 				<th><label for="ethnicity">Ethnicity</label></th>
 				<td><input type="text" id="ethnicity" name="ethnicity" value="<?php echo esc_attr( get_the_author_meta( 'ethnicity', $user->ID ) ); ?>" class="regular-text" /></td>
 			</tr>
-			<!--tr>
-				<th><label for="social-media-platform">Which social media platform do you use on a daily basis?</label></th>
-				<td><input type="text" id="social-media-platform" name="social-media-platform" value="<?php echo esc_attr( get_the_author_meta( 'social-media-platform', $user->ID ) ); ?>" class="regular-text" /></td>
-			</tr-->
 		</tbody>
 	</table>
 	<!--h3>(Only Premium Members)</h3-->
@@ -511,22 +514,22 @@ function add_custom_fields( $user ) {
 			<tr>
 				<th><label for="public-profile-status">Public Profile</label></th>
 				<td>
-					<input type="radio" id="public-profile-status" name="public-profile-status" value="0" <?php echo esc_attr( get_the_author_meta( 'public-profile-status', $user->ID ) ) == 0 ? 'checked="checked"' : '' ; ?> />Everyone can view my profile<br/>
-					<input type="radio" id="public-profile-status" name="public-profile-status" value="1" <?php echo esc_attr( get_the_author_meta( 'public-profile-status', $user->ID ) ) == 1 ? 'checked="checked"' : '' ; ?> />Only FindSpark members can view my profile<br/>
+					<input type="radio" id="public-profile-status" name="public-profile-status" value="0" <?php echo esc_attr( get_the_author_meta( 'public_profile_status', $user->ID ) ) == 0 ? 'checked="checked"' : '' ; ?> />Everyone can view my profile<br/>
+					<input type="radio" id="public-profile-status" name="public-profile-status" value="1" <?php echo esc_attr( get_the_author_meta( 'public_profile_status', $user->ID ) ) == 1 ? 'checked="checked"' : '' ; ?> />Only FindSpark members can view my profile<br/>
 					<?php if (true) { // TODO: Restringir las ultimas opciones para que esten disponibles SOLO para miembros premium ?>
-					<input type="radio" id="public-profile-status" name="public-profile-status" value="2" <?php echo esc_attr( get_the_author_meta( 'public-profile-status', $user->ID ) ) == 2 ? 'checked="checked"' : '' ; ?> />Only FindSpark employers can view my profile<br/>
-					<input type="radio" id="public-profile-status" name="public-profile-status" value="3" <?php echo esc_attr( get_the_author_meta( 'public-profile-status', $user->ID ) ) == 3 ? 'checked="checked"' : '' ; ?> />FindSpark members &amp; employers can view my profile<br/>
+					<input type="radio" id="public-profile-status" name="public-profile-status" value="2" <?php echo esc_attr( get_the_author_meta( 'public_profile_status', $user->ID ) ) == 2 ? 'checked="checked"' : '' ; ?> />Only FindSpark employers can view my profile<br/>
+					<input type="radio" id="public-profile-status" name="public-profile-status" value="3" <?php echo esc_attr( get_the_author_meta( 'public_profile_status', $user->ID ) ) == 3 ? 'checked="checked"' : '' ; ?> />FindSpark members &amp; employers can view my profile<br/>
 					<?php } ?>
 				</td>
 			</tr>
 			<tr>
 				<th><label for="contact-me-status">Contact me</label></th>
 				<td>
-					<input type="radio" id="contact-me-status" name="contact-me-status" value="0" <?php echo esc_attr( get_the_author_meta( 'contact-me-status', $user->ID ) ) == 0 ? 'checked="checked"' : '' ; ?> />Everyone can contact me<br/>
-					<input type="radio" id="contact-me-status" name="contact-me-status" value="1" <?php echo esc_attr( get_the_author_meta( 'contact-me-status', $user->ID ) ) == 1 ? 'checked="checked"' : '' ; ?> />Only FindSpark members can contact me<br/>
+					<input type="radio" id="contact-me-status" name="contact-me-status" value="0" <?php echo esc_attr( get_the_author_meta( 'contact_me_status', $user->ID ) ) == 0 ? 'checked="checked"' : '' ; ?> />Everyone can contact me<br/>
+					<input type="radio" id="contact-me-status" name="contact-me-status" value="1" <?php echo esc_attr( get_the_author_meta( 'contact_me_status', $user->ID ) ) == 1 ? 'checked="checked"' : '' ; ?> />Only FindSpark members can contact me<br/>
 					<?php if (true) { // TODO: Restringir las ultimas opciones para que esten disponibles SOLO para miembros premium ?>
-					<input type="radio" id="contact-me-status" name="contact-me-statuss" value="2" <?php echo esc_attr( get_the_author_meta( 'contact-me-status', $user->ID ) ) == 2 ? 'checked="checked"' : '' ; ?> />Only FindSpark employers can contact me<br/>
-					<input type="radio" id="contact-me-status" name="contact-me-status" value="3" <?php echo esc_attr( get_the_author_meta( 'contact-me-status', $user->ID ) ) == 3 ? 'checked="checked"' : '' ; ?> />FindSpark members &amp; employers can contact me<br/>
+					<input type="radio" id="contact-me-status" name="contact-me-statuss" value="2" <?php echo esc_attr( get_the_author_meta( 'contact_me_status', $user->ID ) ) == 2 ? 'checked="checked"' : '' ; ?> />Only FindSpark employers can contact me<br/>
+					<input type="radio" id="contact-me-status" name="contact-me-status" value="3" <?php echo esc_attr( get_the_author_meta( 'contact_me_status', $user->ID ) ) == 3 ? 'checked="checked"' : '' ; ?> />FindSpark members &amp; employers can contact me<br/>
 					<?php } ?>
 				</td>
 			</tr>
@@ -558,25 +561,26 @@ function save_custom_fields( $user_id ) {
 		update_user_meta( $user_id, 'main_skills', sanitize_text_field( implode( $delimiter_str, $_POST['main-skills'] ) ) );
 		update_user_meta( $user_id, 'target_industries', sanitize_text_field( implode( $delimiter_str, $_POST['target-industries'] ) ) );
 
-		if( $_FILES['profile-pic']['error'] === UPLOAD_ERR_OK ) {
-			/*
+		if ( $_FILES['profile-pic']['error'] === UPLOAD_ERR_OK ) {
 			// Obtenemos el tipo del archivo subido. Esto es retornado como "type/extension"
 			$arr_file_type = wp_check_filetype(basename($_FILES['profile-pic']['name']));
 			$uploaded_file_type = $arr_file_type['type'];
 
 			// Lista de formatos aceptados
 			$allowed_file_types = array('image/jpg','image/jpeg','image/gif','image/png');
-			if(in_array($uploaded_file_type, $allowed_file_types)) {
-
+			// Verificamos si el tipo de archivo se encuentra entre los aceptados
+			if( in_array($uploaded_file_type, $allowed_file_types) ) {
+				$max_img_size = 2; // MB
+				// Verificamos que el tamanho del archivo no se exceda del limite
+				if ( $_FILES['profile-pic']['size'] <= ($max_img_size * 1024 * 1024) ) {
+					// Por defecto Wordpress hara fallar la subida si no se pone: 'test_form' => false
+					$upload_overrides = array( 'test_form' => false );
+					// Subimos la imagen mediante wordpress (la guarda en wp-contents/uploads/anho/mes/)
+				 	$img = wp_handle_upload( $_FILES['profile-pic'], $upload_overrides );
+				 	// Actualizamos la informacion del campo respectivo
+					update_user_meta( $user_id, 'profile_pic', $img );
+				}
 			}
-			*/
-
-			// La subida siempre fallara si no se pone esto: 'test_form' => false
-			$upload_overrides = array( 'test_form' => false );
-			// Subimos la imagen mediante wordpress (la guarda en wp-contents/uploads)
-		 	$img = wp_handle_upload( $_FILES['profile-pic'], $upload_overrides );
-		 	// Actualizamos la informacion del campo respectivo
-			update_user_meta( $user_id, 'profile_pic', $img );
 		}
 	}
 }

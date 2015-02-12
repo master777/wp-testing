@@ -1,0 +1,12 @@
+# Wordpress
+wp-content/uploads/*
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Sublimetext
+/*.sublime-project
+*.sublime-workspace
