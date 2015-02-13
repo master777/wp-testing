@@ -6,10 +6,18 @@ jQuery(document).ready( function() {
 	current_profile_review = jQuery("#profile-pic-preview").attr('src');
 
 	// Inicializamos la funcion de autocompletar para ciertos campos del perfil.
-	var autofill_fields = [ 'target-industries' ];
-	jQuery.each( autofill_fields, function( index, value ) {
-		jQuery('#' + value).tokenize({
-	  		maxElements: 5,
+	var autofill_fields = {
+		'college-attended' : {
+			'maxElements': 0
+		}, 
+		'target-industries' : {
+			'maxElements': 5
+		}
+	};
+
+	jQuery.each( autofill_fields, function( key, value ) {
+		jQuery('#' + key).tokenize({
+	  		maxElements: value['maxElements'],
 	  		newElements: false
 	  });
 	});
