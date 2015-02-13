@@ -6,7 +6,7 @@ jQuery(document).ready( function() {
 	current_profile_review = jQuery("#profile-pic-preview").attr('src');
 
 	// Inicializamos la funcion de autocompletar para ciertos campos del perfil.
-	var autofill_fields = [ 'main-skills', 'target-industries' ];
+	var autofill_fields = [ 'target-industries' ];
 	jQuery.each( autofill_fields, function( index, value ) {
 		jQuery('#' + value).tokenize({
 	  		maxElements: 5,
@@ -45,4 +45,41 @@ function readURL(input) {
 		}
 		reader.readAsDataURL(input.files[0]);		
 	}
+}
+
+// Para la subida del CV (Resume)
+function validateFile(input) {
+	if (input.files && input.files[0]) {
+		var file = input.files[0];
+		var allowed_type_files = [ 'application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' ];
+		var max_file_size = 10; // MB
+
+		// Verificamos que la extension del archivo este permitido
+		if ( jQuery.inArray(file.type, allowed_type_files) == -1 ) {
+			jQuery('#resume').val('');
+			jQuery("#resume-preview").hide();
+			alert('Please only upload PDF, DOC and DOCX files!');
+			return false;
+		}
+
+		// Verificamos que el tamanho del archivo no supere el maximo establecido
+		if ( file.size > (max_file_size * 1024 * 1024) ) {
+			jQuery('#resume').val('');
+			jQuery("#resume-preview").hide();
+			alert('The maximum allowed size is ' + max_file_size + ' MB!');
+			return false;
+		}
+
+		jQuery("#resume-preview").show();
+		jQuery("#resume-name").hide();
+		jQuery("#resume-change").hide();
+	}
+}
+
+function changeFile() {
+	jQuery("#resume").show();
+	jQuery("#resume-change").hide();
+
+	// Activamos el trigger para llamar a validateFile()
+	jQuery("#resume").trigger("click");
 }

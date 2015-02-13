@@ -370,9 +370,11 @@ add_action( 'admin_enqueue_scripts', 'add_custom_scripts' );
 
 function add_custom_fields( $user ) {
 	$is_job_seeker = false;
+	$is_premium_member = false;
 	foreach ($user->roles as $role) {
 		if ( in_array( $role, array( 'subscriber', 'premiummember' ) ) ) {
 			$is_job_seeker = true;
+			$is_premium_member = $role == 'premiummember';
 		}
 	}
 
@@ -381,20 +383,13 @@ function add_custom_fields( $user ) {
 
 		// Lista de elementos por defecto para el autocompletado
 
-		$default_skills_tags = array(
-			"Advertising", "Animation", "Architecture", "Art History", "Business", "Communications", "Computer Science/Engineering", "Creative Writing", "Entrepreneurship",
+		$industries_tags = array(
+			"Advertising", "Animation", "Architecture", "Art History", "Business", "Communications", "Computer Science/Engineering", "Creative Writing", "Entertainment", "Entrepreneurship",
 			"Event Planning", "Fashion", "Fine Art", "Graphic Design", "Journalism", "Marketing", "Music", "Photography", "Production", "Product Design", "Public Relations",
-			"Publishing", "Social Media", "Theater", "TV / Film", "Undecided"
+			"Publishing", "Social Media", "Theater", "TV / Film", "Undecided", "Other"
 		);
-
+		
 		// Inicializamos los valores de cada campo con autocompletado
-
-		$main_skills = esc_attr( get_the_author_meta( 'main_skills', $user->ID ) );
-		if (!empty($main_skills)) {
-			$main_skills = explode($delimiter_str, $main_skills);
-		} else {
-			$main_skills = array();
-		}
 
 		$target_industries = esc_attr( get_the_author_meta( 'target_industries', $user->ID ) );
 		if (!empty($target_industries)) {
@@ -430,11 +425,10 @@ function add_custom_fields( $user ) {
       		<label for="profile-pic"><?php _e('Profile Image', 'shr') ?><p class="description">(it will only be shown in your public profile)</p></label>
       	</th>
       	<td>      		
-          <img width="125px" height="125px" id="profile-pic-preview" src="<?php echo $profile_pic_url; ?>" alt="Your profile image" />
-        	<p>
-    				<input type="file" id="profile-pic" name="profile-pic" onchange="readURL(this);" />
-    			</p>
-          <p class="description">(Recommended 250x250 pixels)</p>
+					<img width="125px" height="125px" id="profile-pic-preview" src="<?php echo $profile_pic_url; ?>" alt="Your profile image" />
+					<br/>
+					<input type="file" id="profile-pic" name="profile-pic" onchange="readURL(this);" accept=".jpg,.jpeg,.png,.gif" />
+					<p class="description">(Recommended 250x250 pixels)</p>
       	</td>
       </tr>
       <tr>
@@ -443,7 +437,7 @@ function add_custom_fields( $user ) {
 			</tr>
 			<tr>
 				<th><label for="year-graduation">Year of Graduation</label></th>
-				<td><input type="text" id="year-graduation" name="year-graduation" value="<?php echo esc_attr( get_the_author_meta( 'year_graduation', $user->ID ) ); ?>" class="regular-text" /></td>
+				<td><input type="text" maxlength="4" id="year-graduation" name="year-graduation" value="<?php echo esc_attr( get_the_author_meta( 'year_graduation', $user->ID ) ); ?>" class="regular-text" /></td>
 			</tr>
 			<tr>
 				<th>Public Profile URL<p class="description">(Not editable)</p></th>
@@ -466,22 +460,26 @@ function add_custom_fields( $user ) {
 			</tr>
 			<tr>
 				<th><label for="main-skills">What are your main skills?</label><p class="description">(Up to 5)</p></th>
-				<td>
-					<select id="main-skills" name="main-skills[]" multiple="multiple" class="profile-field">
-						<?php foreach($default_skills_tags as $tag) { ?>
-							<option value="<?php echo $tag; ?>" <?php echo in_array($tag, $main_skills) ? 'selected="selected"' : ''; ?>><?php echo $tag; ?></option>
-						<?php } ?>
-					</select>
-				</td>				
+				<td><input type="text" id="main-skills" name="main-skills" value="<?php echo esc_attr( get_the_author_meta( 'main_skills', $user->ID ) ); ?>" class="regular-text" /></td>
 			</tr>
 			<tr>
 				<th><label for="target-industries">What are your target industries?</label><p class="description">(Up to 5)</p></th>
 				<td>
 					<select id="target-industries" name="target-industries[]" multiple="multiple" class="profile-field">
-						<?php foreach($default_skills_tags as $tag) { ?>
+						<?php foreach($industries_tags as $tag) { ?>
 							<option value="<?php echo $tag; ?>" <?php echo in_array($tag, $target_industries) ? 'selected="selected"' : ''; ?>><?php echo $tag; ?></option>
 						<?php } ?>
 					</select>
+				</td>
+			</tr>
+			<tr>
+				<th><label for="career-situation">What best describes your current career situation?</label></th>
+				<td>
+					<input type="radio" id="career-situation" name="career-situation" value="1" <?php echo esc_attr( get_the_author_meta( 'career_situation', $user->ID ) ) == 1 ? 'checked="checked"' : '' ; ?> />Student, actively seeking internships<br/>
+					<input type="radio" id="career-situation" name="career-situation" value="2" <?php echo esc_attr( get_the_author_meta( 'career_situation', $user->ID ) ) == 2 ? 'checked="checked"' : '' ; ?> />Student, actively seeking first full-time job<br/>
+					<input type="radio" id="career-situation" name="career-situation" value="3" <?php echo esc_attr( get_the_author_meta( 'career_situation', $user->ID ) ) == 3 ? 'checked="checked"' : '' ; ?> />Unemployed, actively seeking full-time employment<br/>
+					<input type="radio" id="career-situation" name="career-situation" value="4" <?php echo esc_attr( get_the_author_meta( 'career_situation', $user->ID ) ) == 4 ? 'checked="checked"' : '' ; ?> />Employed, actively seeking new full-time opportunities<br/>
+					<input type="radio" id="career-situation" name="career-situation" value="5" <?php echo esc_attr( get_the_author_meta( 'career_situation', $user->ID ) ) == 5 ? 'checked="checked"' : '' ; ?> />Employed, open to new opportunities<br/>
 				</td>
 			</tr>
 		</tbody>
@@ -499,15 +497,29 @@ function add_custom_fields( $user ) {
 			</tr>
 		</tbody>
 	</table>
-	<!--h3>(Only Premium Members)</h3-->
+	<?php //if ($is_premium_member) {	?>
+	<!--h3>(Will only be available for Premium Members)</h3-->
 	<table class="form-table">
 		<tbody>
 			<tr>
 				<th><label for="resume">Upload Resume</label></th>
-				<td><input type="file" id="resume" name="resume" value="<?php echo esc_attr( get_the_author_meta( 'resume', $user->ID ) ); ?>" class="regular-text" /></td>
+				<td>
+					<?php $resume = get_user_meta( $user->ID, 'resume', true ); ?>
+					<div id="resume-preview" <?php echo empty($resume['url']) ? 'style="display: none; "' : '' ?>>
+						<img width="48px" height="64px" src="<?php echo includes_url() . "images/media/document.png"; ?>" alt="Your Resume" />
+						<br/>
+						<span id="resume-name">
+							<?php echo !empty($resume['url']) ? basename($resume['url']) : ''; ?>
+							<br/>
+						</span>
+						<input id="resume-change" type="button" value="Change File" onclick="changeFile()" />
+					</div>
+					<input <?php echo !empty($resume['url']) ? 'style="display: none; "' : '' ?> type="file" onchange="validateFile(this);" id="resume" name="resume" class="regular-text" accept="application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document" />
+				</td>
 			</tr>
 		</tbody>
 	</table>
+	<?php //} ?>
 	<h3>Privacity Settings</h3>
 	<table class="form-table">
 		<tbody>
@@ -516,10 +528,10 @@ function add_custom_fields( $user ) {
 				<td>
 					<input type="radio" id="public-profile-status" name="public-profile-status" value="0" <?php echo esc_attr( get_the_author_meta( 'public_profile_status', $user->ID ) ) == 0 ? 'checked="checked"' : '' ; ?> />Everyone can view my profile<br/>
 					<input type="radio" id="public-profile-status" name="public-profile-status" value="1" <?php echo esc_attr( get_the_author_meta( 'public_profile_status', $user->ID ) ) == 1 ? 'checked="checked"' : '' ; ?> />Only FindSpark members can view my profile<br/>
-					<?php if (true) { // TODO: Restringir las ultimas opciones para que esten disponibles SOLO para miembros premium ?>
+					<?php //if ($is_premium_member) { // Restringimos para que las otras opciones esten disponibles SOLO para miembros premium ?>
 					<input type="radio" id="public-profile-status" name="public-profile-status" value="2" <?php echo esc_attr( get_the_author_meta( 'public_profile_status', $user->ID ) ) == 2 ? 'checked="checked"' : '' ; ?> />Only FindSpark employers can view my profile<br/>
 					<input type="radio" id="public-profile-status" name="public-profile-status" value="3" <?php echo esc_attr( get_the_author_meta( 'public_profile_status', $user->ID ) ) == 3 ? 'checked="checked"' : '' ; ?> />FindSpark members &amp; employers can view my profile<br/>
-					<?php } ?>
+					<?php //} ?>
 				</td>
 			</tr>
 			<tr>
@@ -527,10 +539,10 @@ function add_custom_fields( $user ) {
 				<td>
 					<input type="radio" id="contact-me-status" name="contact-me-status" value="0" <?php echo esc_attr( get_the_author_meta( 'contact_me_status', $user->ID ) ) == 0 ? 'checked="checked"' : '' ; ?> />Everyone can contact me<br/>
 					<input type="radio" id="contact-me-status" name="contact-me-status" value="1" <?php echo esc_attr( get_the_author_meta( 'contact_me_status', $user->ID ) ) == 1 ? 'checked="checked"' : '' ; ?> />Only FindSpark members can contact me<br/>
-					<?php if (true) { // TODO: Restringir las ultimas opciones para que esten disponibles SOLO para miembros premium ?>
-					<input type="radio" id="contact-me-status" name="contact-me-statuss" value="2" <?php echo esc_attr( get_the_author_meta( 'contact_me_status', $user->ID ) ) == 2 ? 'checked="checked"' : '' ; ?> />Only FindSpark employers can contact me<br/>
+					<?php //if ($is_premium_member) { // Restringimos para que las otras opciones esten disponibles SOLO para miembros premium ?>
+					<input type="radio" id="contact-me-status" name="contact-me-status" value="2" <?php echo esc_attr( get_the_author_meta( 'contact_me_status', $user->ID ) ) == 2 ? 'checked="checked"' : '' ; ?> />Only FindSpark employers can contact me<br/>
 					<input type="radio" id="contact-me-status" name="contact-me-status" value="3" <?php echo esc_attr( get_the_author_meta( 'contact_me_status', $user->ID ) ) == 3 ? 'checked="checked"' : '' ; ?> />FindSpark members &amp; employers can contact me<br/>
-					<?php } ?>
+					<?php //} ?>
 				</td>
 			</tr>
 		</tbody>
@@ -544,10 +556,12 @@ add_action( 'edit_user_profile', 'add_custom_fields' );
 
 function save_custom_fields( $user_id ) {
 	$is_job_seeker = false;
+	$is_premium_member = false;
 	$user = get_userdata( $user_id );
 	foreach ($user->roles as $role) {
 		if (in_array($role, array('subscriber', 'premiummember'))) {
 			$is_job_seeker = true;
+			$is_premium_member = $role == 'premiummember';
 		}
 	}
 
@@ -558,7 +572,8 @@ function save_custom_fields( $user_id ) {
 		update_user_meta( $user_id, 'year_graduation', sanitize_text_field( $_POST['year-graduation'] ) );
 		update_user_meta( $user_id, 'job_title', sanitize_text_field( $_POST['job-title'] ) );
 		update_user_meta( $user_id, 'job_company', sanitize_text_field( $_POST['job-company'] ) );
-		update_user_meta( $user_id, 'main_skills', sanitize_text_field( implode( $delimiter_str, $_POST['main-skills'] ) ) );
+		update_user_meta( $user_id, 'main_skills', sanitize_text_field( $_POST['main-skills'] ) );
+		update_user_meta( $user_id, 'career_situation', sanitize_text_field( $_POST['career-situation'] ) );
 		update_user_meta( $user_id, 'target_industries', sanitize_text_field( implode( $delimiter_str, $_POST['target-industries'] ) ) );
 
 		if ( $_FILES['profile-pic']['error'] === UPLOAD_ERR_OK ) {
@@ -582,6 +597,46 @@ function save_custom_fields( $user_id ) {
 				}
 			}
 		}
+
+		update_user_meta( $user_id, 'age', sanitize_text_field( $_POST['age'] ) );
+		update_user_meta( $user_id, 'ethnicity', sanitize_text_field( $_POST['ethnicity'] ) );
+
+		if ( $_FILES['resume']['error'] === UPLOAD_ERR_OK ) {
+			// Obtenemos el tipo del archivo subido. Esto es retornado como "type/extension"
+			$arr_file_type = wp_check_filetype(basename($_FILES['resume']['name']));
+			$uploaded_file_type = $arr_file_type['type'];
+
+			// Lista de formatos aceptados (pdf, doc y docx)
+			$allowed_file_types = array('application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document');
+			// Verificamos si el tipo de archivo se encuentra entre los aceptados
+			if( in_array($uploaded_file_type, $allowed_file_types) ) {
+				$max_file_size = 10; // MB
+				// Verificamos que el tamanho del archivo no se exceda del limite
+				if ( $_FILES['resume']['size'] <= ($max_file_size * 1024 * 1024) ) {
+					// Por defecto Wordpress hara fallar la subida si no se pone: 'test_form' => false
+					$upload_overrides = array( 'test_form' => false );
+					// Subimos la imagen mediante wordpress (la guarda en wp-contents/uploads/anho/mes/)
+				 	$file = wp_handle_upload( $_FILES['resume'], $upload_overrides );
+				 	// Actualizamos la informacion del campo respectivo
+					update_user_meta( $user_id, 'resume', $file );
+				}
+			}
+		}
+
+		$public_profile_status = sanitize_text_field( $_POST['public-profile-status'] );
+		$contact_me_status = sanitize_text_field( $_POST['contact-me-status'] );
+		/*
+		if (!$is_premium_member) { // Si no es miembro premium, no debe poder escoger las opciones adicionales de los radiobutton (value = 2 y 3)
+			if ($public_profile_status >= 2) {
+				$public_profile_status = 0;
+			}
+			if ($contact_me_status >= 2) {
+				$contact_me_status = 0;
+			}
+		}
+		*/
+		update_user_meta( $user_id, 'public_profile_status', $public_profile_status );
+		update_user_meta( $user_id, 'contact_me_status', $contact_me_status );
 	}
 }
 
