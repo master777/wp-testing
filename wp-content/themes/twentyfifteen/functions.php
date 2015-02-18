@@ -963,7 +963,7 @@ function add_custom_fields( $user ) {
 		echo "</pre>";
 		*/		
 
-		if (!empty($pic_data) && !isset($pic_data['error']) /*&& file_exists($pic_data['file'])*/) {
+		if (!empty($pic_data) && !isset($pic_data['error'])) {
 			$profile_pic_url = $pic_data['url'];
 		} else {
 			$profile_pic_url = get_template_directory_uri() . "/images/profile-default.png";
@@ -981,7 +981,7 @@ function add_custom_fields( $user ) {
       		<label for="profile-pic"><?php _e('Profile Image', 'shr') ?><p class="description">(it will only be shown in your public profile)</p></label>
       	</th>
       	<td>      		
-					<img width="125px" height="125px" id="profile-pic-preview" src="<?php echo $profile_pic_url; ?>" alt="Your profile image" />
+					<img width="125px" height="125px" id="profile-pic-preview" src="<?php echo $profile_pic_url; ?>" alt="Your profile image" style="border-radius: 50%" />
 					<br/>
 					<input type="file" id="profile-pic" name="profile-pic" onchange="readURL(this);" accept=".jpg,.jpeg,.png,.gif" />
 					<p class="description">(Recommended 250x250 pixels)</p>
