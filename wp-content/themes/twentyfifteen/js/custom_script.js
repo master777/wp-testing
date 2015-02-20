@@ -3,24 +3,76 @@
  */
 var current_profile_review = "";
 jQuery(document).ready( function() {
-	current_profile_review = jQuery("#profile-pic-preview").attr('src');
+	// Cambiamos el texto de algunos campos
+	jQuery("label[for='description']").text("Tell Us About Yourself");
 
-	// Inicializamos la funcion de autocompletar para ciertos campos del perfil.
-	var autofill_fields = {
-		'college-attended' : {
-			'maxElements': 0
-		}, 
-		'target-industries' : {
-			'maxElements': 5
-		}
-	};
+	var user_role = jQuery("#current-user-role").val();
+	// Verificamos si el usuario actual es un job seeker
+	if (jQuery.inArray(user_role, ["subscriber", "premiummember"]) != -1) {
+		current_profile_review = jQuery("#profile-pic-preview").attr('src');
 
-	jQuery.each( autofill_fields, function( key, value ) {
-		jQuery('#' + key).tokenize({
-	  		maxElements: value['maxElements'],
-	  		newElements: false
-	  });
-	});
+		// Ocultamos algunos campos 
+		jQuery("#wordpress-seo").next("table").hide();
+		jQuery("#wordpress-seo").hide();
+		jQuery("h3:contains('About the user')").hide();
+		jQuery("h3:contains('Contact Info')").hide();
+		
+		// Cambiamos de posicion los siguientes campos:
+		// New Password
+		var current_row = jQuery('#pass2').closest("tr");
+		var target_row = jQuery('#display_name').closest("tr");
+		current_row.insertAfter(target_row);
+
+		// Repeat New Password
+		current_row = jQuery('#pass1').closest("tr");
+		target_row = jQuery('#display_name').closest("tr");
+		current_row.insertAfter(target_row);
+
+		// Email
+		current_row = jQuery('#email').closest("tr");
+		target_row = jQuery('#year-graduation').closest("tr");
+		current_row.insertAfter(target_row);
+
+		// Twitter
+		current_row = jQuery('#twitter').closest("tr");
+		target_row = jQuery('#year-graduation').closest("tr");
+		current_row.insertAfter(target_row);
+
+		// Linkedin
+		current_row = jQuery('#linkedin').closest("tr");
+		target_row = jQuery('#year-graduation').closest("tr");
+		current_row.insertAfter(target_row);
+
+		// Website
+		current_row = jQuery('#url').closest("tr");
+		target_row = jQuery('#year-graduation').closest("tr");
+		current_row.insertAfter(target_row);
+
+		// Biographical Info (Tell Us About Yourself)
+		current_row = jQuery('#description').closest("tr");
+		target_row = jQuery('#year-graduation').closest("tr");
+		current_row.insertAfter(target_row);
+
+		// Inicializamos la funcion de autocompletar para ciertos campos del perfil.
+		var autofill_fields = {
+			'college-attended' : {
+				'maxElements': 1
+			}, 
+			'target-industries' : {
+				'maxElements': 5
+			},
+			'ethnicity' : {
+				'maxElements': 7
+			}
+		};
+
+		jQuery.each( autofill_fields, function( key, value ) {
+			jQuery('#' + key).tokenize({
+		  		maxElements: value['maxElements'],
+		  		newElements: false
+		  });
+		});
+	}
 });
 
 // Para la subida de imagenes

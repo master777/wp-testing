@@ -941,7 +941,11 @@ function add_custom_fields( $user ) {
 			"Youngstown State University",
 			"Zurich University"
 		);
-		
+
+		$ethnicity_tags = array(
+			"Asian", "American Indian or Alaskin Native", "Black or African American", "Hispanic or Latino ", "Native Hawian or Pacific Islander", "White", "Two or more races"
+		);
+
 		// Inicializamos los valores de cada campo con autocompletado
 
 		$target_industries = get_user_meta( $user->ID, 'target_industries', true ); // get_user_meta "deserializa" el valor almacenado
@@ -952,6 +956,11 @@ function add_custom_fields( $user ) {
 		$college_attended = get_user_meta( $user->ID, 'college_attended', true );
 		if (!is_array($college_attended)) {
 			$college_attended = array();
+		}
+
+		$ethnicity = get_user_meta( $user->ID, 'ethnicity', true );
+		if (!is_array($ethnicity)) {
+			$ethnicity = array();
 		}
 
 		$pic_data = get_user_meta( $user->ID, 'profile_pic', true );
@@ -972,8 +981,8 @@ function add_custom_fields( $user ) {
 		// Formamos la URL del perfil publico del usuario actual (formato: home/profile/username)
 		$public_profile_url = site_url() . "/profile/" . $user->user_nicename;
 ?>
-
-	<h3>Basic Info</h3>
+	<input type="hidden" id="current-user-role" value="<?php echo $user->roles[0]; ?>" />
+	<h3 id="basic-info">Basic Info</h3>
 	<table class="form-table">
 		<tbody>
 			<tr>
@@ -987,6 +996,12 @@ function add_custom_fields( $user ) {
 					<p class="description">(Recommended 250x250 pixels)</p>
       	</td>
       </tr>
+			<tr>
+				<th>Public Profile URL<p class="description">(Not editable)</p></th>
+				<td>
+					<a id="public-profile-url" href="<?php echo $public_profile_url; ?>" target="_blank"><?php echo $public_profile_url; ?></a>
+				</td>
+			</tr>		
       <tr>
 				<th><label for="college-attended">College Attended</label></th>
 				<td>
@@ -1001,15 +1016,9 @@ function add_custom_fields( $user ) {
 				<th><label for="year-graduation">Year of Graduation</label></th>
 				<td><input type="text" maxlength="4" id="year-graduation" name="year-graduation" value="<?php echo esc_attr( get_the_author_meta( 'year_graduation', $user->ID ) ); ?>" class="regular-text" /></td>
 			</tr>
-			<tr>
-				<th>Public Profile URL<p class="description">(Not editable)</p></th>
-				<td>
-					<a href="<?php echo $public_profile_url; ?>" target="_blank"><?php echo $public_profile_url; ?></a>
-				</td>
-			</tr>
 		</tbody>
 	</table>
-	<h3>Career Background</h3>
+	<h3 id="career-background">Career Background</h3>
 	<table class="form-table">
 		<tbody>
 			<tr>
@@ -1046,7 +1055,7 @@ function add_custom_fields( $user ) {
 			</tr>
 		</tbody>
 	</table>
-	<h3>Demographic Info</h3>
+	<h3 id="demographic-info">Demographic Info</h3>
 	<table class="form-table">
 		<tbody>
 			<tr>
@@ -1055,7 +1064,13 @@ function add_custom_fields( $user ) {
 			</tr>
 			<tr>
 				<th><label for="ethnicity">Ethnicity</label></th>
-				<td><input type="text" id="ethnicity" name="ethnicity" value="<?php echo esc_attr( get_the_author_meta( 'ethnicity', $user->ID ) ); ?>" class="regular-text" /></td>
+				<td>					
+					<select id="ethnicity" name="ethnicity[]" multiple="multiple" class="profile-field">
+						<?php foreach($ethnicity_tags as $tag) { ?>
+							<option value="<?php echo $tag; ?>" <?php echo in_array($tag, $ethnicity) ? 'selected="selected"' : ''; ?>><?php echo $tag; ?></option>
+						<?php } ?>
+					</select>
+				</td>
 			</tr>
 		</tbody>
 	</table>
@@ -1082,7 +1097,7 @@ function add_custom_fields( $user ) {
 		</tbody>
 	</table>
 	<?php //} ?>
-	<h3>Privacity Settings</h3>
+	<h3 id="privacity-settings">Privacity Settings</h3>
 	<table class="form-table">
 		<tbody>
 			<tr>
@@ -1135,7 +1150,7 @@ function save_custom_fields( $user_id ) {
 		update_user_meta( $user_id, 'main_skills', sanitize_text_field( $_POST['main-skills'] ) );
 		update_user_meta( $user_id, 'career_situation', sanitize_text_field( $_POST['career-situation'] ) );
 		update_user_meta( $user_id, 'target_industries', $_POST['target-industries'] );
-
+		
 		if ( $_FILES['profile-pic']['error'] === UPLOAD_ERR_OK ) {
 			// Obtenemos el tipo del archivo subido. Esto es retornado como "type/extension"
 			$arr_file_type = wp_check_filetype(basename($_FILES['profile-pic']['name']));
@@ -1159,7 +1174,7 @@ function save_custom_fields( $user_id ) {
 		}
 
 		update_user_meta( $user_id, 'age', sanitize_text_field( $_POST['age'] ) );
-		update_user_meta( $user_id, 'ethnicity', sanitize_text_field( $_POST['ethnicity'] ) );
+		update_user_meta( $user_id, 'ethnicity', $_POST['ethnicity'] );
 
 		if ( $_FILES['resume']['error'] === UPLOAD_ERR_OK ) {
 			// Obtenemos el tipo del archivo subido. Esto es retornado como "type/extension"
@@ -1209,5 +1224,20 @@ function make_form_accept_uploads() {
 }
 
 add_action('user_edit_form_tag', 'make_form_accept_uploads');
+
+function my_user_contactmethods($user_contactmethods) { 
+  unset($user_contactmethods['aim']);
+  unset($user_contactmethods['yim']);
+  unset($user_contactmethods['jabber']);
+  unset($user_contactmethods['googleplus']);
+  unset($user_contactmethods['twitter']);
+  unset($user_contactmethods['facebook']);
+
+	$user_contactmethods['twitter'] = "Twitter";
+  $user_contactmethods['linkedin'] = "LinkedIn";
+
+  return $user_contactmethods;
+}
+add_filter('user_contactmethods', 'my_user_contactmethods');
 
 //========================
