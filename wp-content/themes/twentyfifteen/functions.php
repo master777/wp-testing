@@ -339,3 +339,8 @@ require get_template_directory() . '/inc/customizer.php';
  * Add additional fields to job seeker profiles.
  */
 require get_template_directory(). '/custom/additional_fields.php';
+
+/**
+ * Add popup register form in the frontend.
+ */
+require get_template_directory(). '/custom/popup-signup.php';
