@@ -63,6 +63,9 @@ jQuery(document).ready( function() {
 			},
 			'ethnicity' : {
 				'maxElements': 7
+			},
+			'main-skills' : {
+				'maxElements': 5
 			}
 		};
 

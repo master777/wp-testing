@@ -46,6 +46,7 @@ if (!empty($wp_query->query_vars['user'])) {
 		$facebook = esc_attr( get_the_author_meta( 'facebook', $user_profile->ID ) );
 		$twitter = esc_attr( get_the_author_meta( 'twitter', $user_profile->ID ) );
 		$google_plus = esc_attr( get_the_author_meta( 'googleplus', $user_profile->ID ) );
+		$linkedin = esc_attr( get_the_author_meta( 'linkedin', $user_profile->ID ) );
 		//$yahoo = esc_attr( get_the_author_meta( 'yim', $user_profile->ID ) );
 
 		/*
@@ -81,6 +82,11 @@ if (!empty($wp_query->query_vars['user'])) {
 		$target_industries = get_user_meta( $user_profile->ID, 'target_industries', true );
 		if (!is_array($target_industries)) {
 			$target_industries = array();
+		}
+
+		$skills = get_user_meta( $user_profile->ID, 'main_skills', true );
+		if (!is_array($skills)) {
+			$skills = array();
 		}
 
 		$resume = get_user_meta( $user_profile->ID, 'resume', true );
@@ -153,15 +159,18 @@ if (!empty($wp_query->query_vars['user'])) {
 						</div>						
 						<div>
 							<p>
-		         		<a href="<?php echo $facebook; ?>" target="_blank">
+		         		<!--a href="<?php echo $facebook; ?>" target="_blank">
 									<img alt="" width="40" height="40" class="avatar-bg" src="<?php echo get_template_directory_uri(); ?>/images/square-facebook-128.png" />
-								</a>
+								</a-->
 								<a href="<?php echo $twitter; ?>" target="_blank">
 									<img alt="" width="40" height="40" class="avatar-bg" src="<?php echo get_template_directory_uri(); ?>/images/square-twitter-128.png" />
 								</a>
-								<a href="<?php echo $google_plus; ?>" target="_blank">
-									<img alt="" width="40" height="40" class="avatar-bg" src="<?php echo get_template_directory_uri(); ?>/images/square-google-plus-128.png" />
+								<a href="<?php echo $linkedin; ?>" target="_blank">
+									<img alt="" width="40" height="40" class="avatar-bg" src="<?php echo get_template_directory_uri(); ?>/images/square-linkedin-128.png" />
 								</a>
+								<!--a href="<?php echo $google_plus; ?>" target="_blank">
+									<img alt="" width="40" height="40" class="avatar-bg" src="<?php echo get_template_directory_uri(); ?>/images/square-google-plus-128.png" />
+								</a-->
 								<!--a href="<?php echo $yahoo; ?>" target="_blank">
 									<img alt="" width="40" height="40" class="avatar-bg" src="<?php echo get_template_directory_uri(); ?>/images/square-yahoo-128.png" />
 								</a-->
@@ -226,7 +235,9 @@ if (!empty($wp_query->query_vars['user'])) {
 						</div>						
 						<div>
 							<p>
-								<?php echo esc_attr( get_the_author_meta( 'main_skills', $user_profile->ID ) ); ?>							
+								<?php foreach ($skills as $skill) {
+								echo $skill . "<br/>";
+								} ?>
 							</p>
 						</div>
 					</div>

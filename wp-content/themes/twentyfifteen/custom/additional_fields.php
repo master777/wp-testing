@@ -597,6 +597,109 @@ function add_custom_fields( $user ) {
 			"Asian", "American Indian or Alaskin Native", "Black or African American", "Hispanic or Latino ", "Native Hawian or Pacific Islander", "White", "Two or more races"
 		);
 
+		$skill_tags = array(
+			"Management",
+			"Business",
+			"TBD",
+			"Sales ",
+			"Marketing",
+			"TBD",
+			"Communication",
+			"Microsoft Office",
+			"Customer Service",
+			"Training",
+			"Microsoft Excel",
+			"Project Management",
+			"Designs",
+			"Analysis",
+			"Research",
+			"Websites",
+			"Budgets",
+			"Organization",
+			"Leadership",
+			"Time Management",
+			"Project Planning",
+			"Computer Program",
+			"Strategic Planning",
+			"Business Services",
+			"Applications",
+			"Reports",
+			"Microsoft Word",
+			"Program Management",
+			"Powerpoint",
+			"Negotation",
+			"Software",
+			"Networking",
+			"Offices",
+			"TBD",
+			"English",
+			"Data",
+			"TBD",
+			"Education",
+			"Events",
+			"International",
+			"Testing",
+			"Writing",
+			"Vendors",
+			"Advertising",
+			"Databases",
+			"Technology",
+			"TBD",
+			"Finance",
+			"Retail",
+			"accounting",
+			"social media",
+			"Teaching",
+			"Engineering",
+			"Performance Tuning",
+			"Problem Solving",
+			"Marketing Strategy",
+			"Materials",
+			"Recruiting",
+			"Order Fulfillment",
+			"Corporate Law",
+			"Photoshop",
+			"TBD",
+			"New business development",
+			"Human resources",
+			"Public speaking",
+			"Manufacturing",
+			"Internal Audit",
+			"strategy",
+			"Employees",
+			"Cost",
+			"Business Development",
+			"Windows",
+			"TBD",
+			"Public Relations",
+			"Product Development",
+			"Auditing",
+			"Business Strategy",
+			"Presentations",
+			"Construction",
+			"Real Estate",
+			"Editing",
+			"Sales Management",
+			"Team Building",
+			"Healthcare",
+			"TBD",
+			"Revenue",
+			"Compliance",
+			"Legal",
+			"Innovation",
+			"Policy",
+			"Mentoring",
+			"Commercial Real Estate",
+			"Consulting",
+			"Information Technology",
+			"Process Improvement",
+			"Change management",
+			"Heavy Equipment",
+			"Teamwork",
+			"Promotions",
+			"Facilities Management"
+		);		
+
 		// Inicializamos los valores de cada campo con autocompletado
 
 		$target_industries = get_user_meta( $user->ID, 'target_industries', true ); // get_user_meta "deserializa" el valor almacenado
@@ -612,6 +715,11 @@ function add_custom_fields( $user ) {
 		$ethnicity = get_user_meta( $user->ID, 'ethnicity', true );
 		if (!is_array($ethnicity)) {
 			$ethnicity = array();
+		}
+
+		$skills = get_user_meta( $user->ID, 'main_skills', true );
+		if (!is_array($skills)) {
+			$skills = array();
 		}
 
 		$pic_data = get_user_meta( $user->ID, 'profile_pic', true );
@@ -681,8 +789,14 @@ function add_custom_fields( $user ) {
 				<td><input type="text" id="job-company" name="job-company" value="<?php echo esc_attr( get_the_author_meta( 'job_company', $user->ID ) ); ?>" class="regular-text" /></td>
 			</tr>
 			<tr>
-				<th><label for="main-skills">What are your main skills?</label></th>
-				<td><input type="text" id="main-skills" name="main-skills" value="<?php echo esc_attr( get_the_author_meta( 'main_skills', $user->ID ) ); ?>" class="regular-text" /></td>
+				<th><label for="main-skills">What are your main skills?</label><p class="description">(Up to 5)</p></th>
+				<td>
+					<select id="main-skills" name="main-skills[]" multiple="multiple" class="profile-field">
+						<?php foreach($skill_tags as $tag) { ?>
+							<option value="<?php echo $tag; ?>" <?php echo in_array($tag, $skills) ? 'selected="selected"' : ''; ?>><?php echo $tag; ?></option>
+						<?php } ?>
+					</select>
+				</td>
 			</tr>
 			<tr>
 				<th><label for="target-industries">What are your target industries?</label><p class="description">(Up to 5)</p></th>
@@ -798,8 +912,8 @@ function save_custom_fields( $user_id ) {
 		update_user_meta( $user_id, 'year_graduation', sanitize_text_field( $_POST['year-graduation'] ) );
 		update_user_meta( $user_id, 'job_title', sanitize_text_field( $_POST['job-title'] ) );
 		update_user_meta( $user_id, 'job_company', sanitize_text_field( $_POST['job-company'] ) );
-		update_user_meta( $user_id, 'main_skills', sanitize_text_field( $_POST['main-skills'] ) );
 		update_user_meta( $user_id, 'career_situation', sanitize_text_field( $_POST['career-situation'] ) );
+		update_user_meta( $user_id, 'main_skills', $_POST['main-skills'] );
 		update_user_meta( $user_id, 'target_industries', $_POST['target-industries'] );
 		
 		if ( $_FILES['profile-pic']['error'] === UPLOAD_ERR_OK ) {
