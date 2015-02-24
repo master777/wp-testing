@@ -16,7 +16,10 @@ function add_custom_menu( $nav, $args ) {
 add_filter('wp_nav_menu_items','add_custom_menu', 10, 2);
 
 function add_custom_style($hook) {
-	wp_enqueue_style( 'colorbox.css', get_template_directory_uri() . '/css/colorbox.css' );	
+	//wp_enqueue_style( 'font-awesome.min.css', get_template_directory_uri() . '/css/font-awesome.min.css' );
+	wp_enqueue_style( 'fs-forms.css', get_template_directory_uri() . '/css/fs-forms.css' );
+
+	wp_enqueue_style( 'colorbox.css', get_template_directory_uri() . '/css/colorbox.css' );
 	wp_enqueue_script( 'jquery.colorbox-min.js', get_template_directory_uri() . '/js/jquery.colorbox-min.js' );
 	wp_enqueue_script( 'popup-init.js', get_template_directory_uri() . '/js/popup-init.js' );	
 
@@ -108,42 +111,84 @@ function add_register_form() {
 	if (!is_user_logged_in()) {
 	?>
 <div style='display:none'>
-	<div id='sign_up' style='padding:10px; background:#fff;'>
-		<h2>Became a FindSpark Member!</h2>
-		<br/>
-		<form id="register_form" style="max-width: 95%;">
-			<div>
-				<label for="firstname">First Name</label>
-				<input type="text" name="firstname" id="firstname" />
+	<style type="text/css">
+	/* Pruebas de estilo */	
+	</style>
+	<div id='sign_up'>
+		<form id="register_form" class="fs-form">
+			<h2>Became a FindSpark Member!</h2>
+			<fieldset>
+				<section class="form-error" style="display:none;">
+						<i class="icon-remove-sign"></i>
+						<label id="error_text"></label>
+				</section>
+				<section class="form-success" style="display:none;">
+						<i class="icon-ok-sign"></i>
+						<label id="success_text"></label>
+				</section>
+				<section>
+					<label class="input">
+						<i class="icon-append icon-user"></i>
+						<input type="text" name="firstname" id="firstname" placeholder="First Name" autocomplete="off" />
+						<!--b class="tooltip tooltip-bottom-right">Only characters and numbers</b-->
+					</label>
+				</section>
+				<section>
+					<label class="input">
+						<i class="icon-append icon-user"></i>
+						<input type="text" name="lastname" id="lastname" placeholder="Last Name" autocomplete="off" />
+					</label>
+				</section>
+				<section>
+					<label class="input">
+						<i class="icon-append icon-user"></i>
+						<input type="text" name="username" id="username" placeholder="Username" autocomplete="off" />
+					</label>
+				</section>
+				<section>
+					<label class="input">
+						<i class="icon-append icon-envelope-alt"></i>
+						<input type="text" name="email" id="email" placeholder="E-mail" autocomplete="off" />
+					</label>
+				</section>
+				<section>
+					<label class="input">
+						<i class="icon-append icon-lock"></i>
+						<input type="password" name="password" id="password" placeholder="Password" autocomplete="off" />
+					</label>
+				</section>
+			</fieldset>
+			<fieldset>
+				<section>
+					<strong>What best describes your current career situation?</strong>
+					<div>
+						<input type="radio" id="career-situation-1" name="career-situation" value="1" checked="checked"/>
+						<label for="career-situation-1" class="pointer">Student, actively seeking internships</label>
+					</div>
+					<div>
+						<input type="radio" id="career-situation-2" name="career-situation" value="2" />
+						<label for="career-situation-2" class="pointer">Student, actively seeking first full-time job</label>
+					</div>
+					<div>
+						<input type="radio" id="career-situation-3" name="career-situation" value="3" />
+						<label for="career-situation-3" class="pointer">Unemployed, actively seeking full-time employment</label>
+					</div>
+					<div>
+						<input type="radio" id="career-situation-4" name="career-situation" value="4" />
+						<label for="career-situation-4" class="pointer">Employed, actively seeking new full-time opportunities</label>
+					</div>
+					<div>
+						<input type="radio" id="career-situation-5" name="career-situation" value="5" />
+						<label for="career-situation-5" class="pointer">Employed, open to new opportunities</label>
+					</div>
+				</section>
+				<section>
+					<input type="checkbox" id="agree" name="agree" value="1" /> I agree to the <strong><a href="<?php echo site_url(); ?>/terms" target="_blank">FindSpark Terms &amp; Conditions</a></strong>
+				</section>
+			</fieldset>
+			<div class="form-footer">
+				<input type="button" class="button" name="register_button" id="register_button" value="Register" />
 			</div>
-			<div>
-				<label for="lastname">Last Name</label>
-				<input type="text" name="lastname" id="firstname" />
-			</div>
-			<div>
-				<label for="username">Username</label>
-				<input type="text" name="username" id="username" />
-			</div>
-			<div>
-				<label for="email">E-mail</label>
-				<input type="text" name="email" id="email" />
-			</div>
-			<div>
-				<label for="password">Password</label>
-				<input type="password" name="password" id="password" />
-			</div>
-			<div>
-				<label for="career-situation">What best describes your current career situation?</label><br/>
-				<input type="radio" id="career-situation" name="career-situation" value="1" checked="checked"/>Student, actively seeking internships<br/>
-				<input type="radio" id="career-situation" name="career-situation" value="2" />Student, actively seeking first full-time job<br/>
-				<input type="radio" id="career-situation" name="career-situation" value="3" />Unemployed, actively seeking full-time employment<br/>
-				<input type="radio" id="career-situation" name="career-situation" value="4" />Employed, actively seeking new full-time opportunities<br/>
-				<input type="radio" id="career-situation" name="career-situation" value="5" />Employed, open to new opportunities<br/>
-			</div>
-			<br/>
-			<input type="checkbox" id="agree" name="agree" value="1" /> I agree to the <strong><a href="<?php echo site_url(); ?>/terms" target="_blank">FindSpark Terms &amp; Conditions</a></strong>
-			<input type="hidden" name="sent" value="true" />
-			<p><input type="button" name="register_button" id="register_button" value="Register" /></p>
 		</form>
 	</div>
 </div>
