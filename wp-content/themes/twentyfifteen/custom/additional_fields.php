@@ -811,11 +811,26 @@ function add_custom_fields( $user ) {
 			<tr>
 				<th><label for="career-situation">What best describes your current career situation?</label></th>
 				<td>
-					<input type="radio" id="career-situation" name="career-situation" value="1" <?php echo esc_attr( get_the_author_meta( 'career_situation', $user->ID ) ) == 1 ? 'checked="checked"' : '' ; ?> />Student, actively seeking internships<br/>
-					<input type="radio" id="career-situation" name="career-situation" value="2" <?php echo esc_attr( get_the_author_meta( 'career_situation', $user->ID ) ) == 2 ? 'checked="checked"' : '' ; ?> />Student, actively seeking first full-time job<br/>
-					<input type="radio" id="career-situation" name="career-situation" value="3" <?php echo esc_attr( get_the_author_meta( 'career_situation', $user->ID ) ) == 3 ? 'checked="checked"' : '' ; ?> />Unemployed, actively seeking full-time employment<br/>
-					<input type="radio" id="career-situation" name="career-situation" value="4" <?php echo esc_attr( get_the_author_meta( 'career_situation', $user->ID ) ) == 4 ? 'checked="checked"' : '' ; ?> />Employed, actively seeking new full-time opportunities<br/>
-					<input type="radio" id="career-situation" name="career-situation" value="5" <?php echo esc_attr( get_the_author_meta( 'career_situation', $user->ID ) ) == 5 ? 'checked="checked"' : '' ; ?> />Employed, open to new opportunities<br/>
+					<div>
+						<input type="radio" id="career-situation-1" name="career-situation" value="1" <?php echo esc_attr( get_the_author_meta( 'career_situation', $user->ID ) ) == 1 ? 'checked="checked"' : '' ; ?> />
+						<label for="career-situation-1">Student, actively seeking internships</label>					
+					</div>
+					<div>
+						<input type="radio" id="career-situation-2" name="career-situation" value="2" <?php echo esc_attr( get_the_author_meta( 'career_situation', $user->ID ) ) == 2 ? 'checked="checked"' : '' ; ?> />
+						<label for="career-situation-2">Student, actively seeking first full-time job</label>
+					</div>
+					<div>
+						<input type="radio" id="career-situation-3" name="career-situation" value="3" <?php echo esc_attr( get_the_author_meta( 'career_situation', $user->ID ) ) == 3 ? 'checked="checked"' : '' ; ?> />
+						<label for="career-situation-3">Unemployed, actively seeking full-time employment</label>
+					</div>
+					<div>
+						<input type="radio" id="career-situation-4" name="career-situation" value="4" <?php echo esc_attr( get_the_author_meta( 'career_situation', $user->ID ) ) == 4 ? 'checked="checked"' : '' ; ?> />
+						<label for="career-situation-4">Employed, actively seeking new full-time opportunities</label>					
+					</div>
+					<div>
+						<input type="radio" id="career-situation-5" name="career-situation" value="5" <?php echo esc_attr( get_the_author_meta( 'career_situation', $user->ID ) ) == 5 ? 'checked="checked"' : '' ; ?> />
+						<label for="career-situation-5">Employed, open to new opportunities</label>
+					</div>
 				</td>
 			</tr>
 		</tbody>
@@ -868,22 +883,46 @@ function add_custom_fields( $user ) {
 			<tr>
 				<th><label for="public-profile-status">Public Profile</label></th>
 				<td>
-					<input type="radio" id="public-profile-status" name="public-profile-status" value="0" <?php echo esc_attr( get_the_author_meta( 'public_profile_status', $user->ID ) ) == 0 ? 'checked="checked"' : '' ; ?> />Everyone can view my profile<br/>
-					<input type="radio" id="public-profile-status" name="public-profile-status" value="1" <?php echo esc_attr( get_the_author_meta( 'public_profile_status', $user->ID ) ) == 1 ? 'checked="checked"' : '' ; ?> />Only FindSpark members can view my profile<br/>
+					<div>
+						<input type="radio" id="public-profile-status-0" name="public-profile-status" value="0" <?php echo esc_attr( get_the_author_meta( 'public_profile_status', $user->ID ) ) == 0 ? 'checked="checked"' : '' ; ?> />
+						<label for="public-profile-status-0">Everyone can view my profile</label>
+					</div>
+					<div>
+						<input type="radio" id="public-profile-status-1" name="public-profile-status" value="1" <?php echo esc_attr( get_the_author_meta( 'public_profile_status', $user->ID ) ) == 1 ? 'checked="checked"' : '' ; ?> />
+						<label for="public-profile-status-1">Only FindSpark members can view my profile</label>						
+					</div>
 					<?php //if ($is_premium_member) { // Restringimos para que las otras opciones esten disponibles SOLO para miembros premium ?>
-					<input type="radio" id="public-profile-status" name="public-profile-status" value="2" <?php echo esc_attr( get_the_author_meta( 'public_profile_status', $user->ID ) ) == 2 ? 'checked="checked"' : '' ; ?> />Only FindSpark employers can view my profile<br/>
-					<input type="radio" id="public-profile-status" name="public-profile-status" value="3" <?php echo esc_attr( get_the_author_meta( 'public_profile_status', $user->ID ) ) == 3 ? 'checked="checked"' : '' ; ?> />FindSpark members &amp; employers can view my profile<br/>
+					<div>
+						<input type="radio" id="public-profile-status-2" name="public-profile-status" value="2" <?php echo esc_attr( get_the_author_meta( 'public_profile_status', $user->ID ) ) == 2 ? 'checked="checked"' : '' ; ?> />
+						<label for="public-profile-status-2">Only FindSpark employers can view my profile</label>
+					</div>
+					<div>
+						<input type="radio" id="public-profile-status-3" name="public-profile-status" value="3" <?php echo esc_attr( get_the_author_meta( 'public_profile_status', $user->ID ) ) == 3 ? 'checked="checked"' : '' ; ?> />
+						<label for="public-profile-status-3">FindSpark members &amp; employers can view my profile</label>
+					</div>
 					<?php //} ?>
 				</td>
 			</tr>
 			<tr>
 				<th><label for="contact-me-status">Contact me</label></th>
 				<td>
-					<input type="radio" id="contact-me-status" name="contact-me-status" value="0" <?php echo esc_attr( get_the_author_meta( 'contact_me_status', $user->ID ) ) == 0 ? 'checked="checked"' : '' ; ?> />Everyone can contact me<br/>
-					<input type="radio" id="contact-me-status" name="contact-me-status" value="1" <?php echo esc_attr( get_the_author_meta( 'contact_me_status', $user->ID ) ) == 1 ? 'checked="checked"' : '' ; ?> />Only FindSpark members can contact me<br/>
+					<div>
+						<input type="radio" id="contact-me-status-0" name="contact-me-status" value="0" <?php echo esc_attr( get_the_author_meta( 'contact_me_status', $user->ID ) ) == 0 ? 'checked="checked"' : '' ; ?> />
+						<label for="contact-me-status-0">Everyone can contact me</label>						
+					</div>
+					<div>
+						<input type="radio" id="contact-me-status-1" name="contact-me-status" value="1" <?php echo esc_attr( get_the_author_meta( 'contact_me_status', $user->ID ) ) == 1 ? 'checked="checked"' : '' ; ?> />
+						<label for="contact-me-status-1">Only FindSpark members can contact me</label>
+					</div>
 					<?php //if ($is_premium_member) { // Restringimos para que las otras opciones esten disponibles SOLO para miembros premium ?>
-					<input type="radio" id="contact-me-status" name="contact-me-status" value="2" <?php echo esc_attr( get_the_author_meta( 'contact_me_status', $user->ID ) ) == 2 ? 'checked="checked"' : '' ; ?> />Only FindSpark employers can contact me<br/>
-					<input type="radio" id="contact-me-status" name="contact-me-status" value="3" <?php echo esc_attr( get_the_author_meta( 'contact_me_status', $user->ID ) ) == 3 ? 'checked="checked"' : '' ; ?> />FindSpark members &amp; employers can contact me<br/>
+					<div>
+						<input type="radio" id="contact-me-status-2" name="contact-me-status" value="2" <?php echo esc_attr( get_the_author_meta( 'contact_me_status', $user->ID ) ) == 2 ? 'checked="checked"' : '' ; ?> />
+						<label for="contact-me-status-2">Only FindSpark employers can contact me</label>
+					</div>
+					<div>
+						<input type="radio" id="contact-me-status-3" name="contact-me-status" value="3" <?php echo esc_attr( get_the_author_meta( 'contact_me_status', $user->ID ) ) == 3 ? 'checked="checked"' : '' ; ?> />
+						<label for="contact-me-status-3">FindSpark members &amp; employers can contact me</label>
+					</div>
 					<?php //} ?>
 				</td>
 			</tr>
