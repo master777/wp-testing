@@ -36,8 +36,6 @@ function ajax_save_data() {
   $result = array();
 
   if ( wp_verify_nonce( $_POST['nonce'], 'ajax_register_nonce' ) ) {
-  	// TODO: Verificar los campos
-
   	$username = sanitize_text_field($_POST['username']);
   	$password = sanitize_text_field($_POST['password']);
   	$email = sanitize_text_field($_POST['email']);
@@ -47,56 +45,80 @@ function ajax_save_data() {
   	// Custom Fields
   	$career_situation = sanitize_text_field($_POST['career_situation']);
 
-  	$user = array(
-  		'user_login' => $username,
-  		'user_pass' => $password,
-  		'first_name' => $firstname,
-  		'last_name' => $lastname,
-  		'display_name' => $firstname . ' ' . $lastname,
-  		'user_email' => $email,
-  		'role' => 'subscriber'
-  	);
+  	// Validamos los campos
+  	if (empty($firstname)) {
+  		$result['error'] = "The first name is required!";
+  	} else if (!preg_match("/^[a-zA-Z ]*$/", $firstname)) {
+  		$result['error'] = "Please only letters to first name!";
+  	} else if (empty($lastname)) {
+  		$result['error'] = "The last name is required!";
+  	} else if (!preg_match("/^[a-zA-Z ]*$/", $lastname)) {
+  		$result['error'] = "Please only letters to last name!";  	
+  	} else if (empty($username)) {
+  		$result['error'] = "The username is required!";
+		} else if (empty($email)) {
+  		$result['error'] = "The email address is required!";
+  	} else if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+		  $result['error'] = "Invalid email address!";
+  	} else if (empty($password)) {
+  		$result['error'] = "The password is required!";
+  	} else if (strlen($password) < 6) {
+  		$result['error'] = "The password must be at least 6 characters!";  	
+		} else {
+			// Intentamos registrar al usuario
+	  	$user = array(
+	  		'user_login' => $username,
+	  		'user_pass' => $password,
+	  		'first_name' => $firstname,
+	  		'last_name' => $lastname,
+	  		'display_name' => $firstname . ' ' . $lastname,
+	  		'user_email' => $email,
+	  		'role' => 'subscriber'
+	  	);
 
-  	$user_id = wp_insert_user($user);
-  	if ( !is_wp_error( $user_id ) ) {
-  		// Registramos los campos faltantes
-  		update_user_meta($user_id, 'career_situation', $career_situation);
+	  	$user_id = wp_insert_user($user);
+	  	if ( !is_wp_error( $user_id ) ) {
+	  		$result['registered'] = true;
 
-  		// Logueamos al usuario en el sitio
-  		$cred = array(
-				'user_login' => $username,
-				'user_password' => $password,
-				'remember' => false
-			);
+	  		// Registramos los campos faltantes
+	  		update_user_meta($user_id, 'career_situation', $career_situation);
 
-			$logged_user = wp_signon($cred, false);
+	  		// Logueamos al usuario en el sitio
+	  		$cred = array(
+					'user_login' => $username,
+					'user_password' => $password,
+					'remember' => false
+				);
 
-			if ( is_wp_error( $logged_user ) ) {
-				$result['error'] = $logged_user->get_error_message();
-			} else {
-				$result['logged_in'] = true;
-			}
-  	} else { // Ocurrio un error
-  		/*
-  		$error = $user_id->get_error_codes();
+				$logged_user = wp_signon($cred, false);
 
-  		if (in_array('empty_user_login', $error)) {
-  			$result['error'] = __('The username can not be empty');
-  		} else if (in_array('existing_user_login', $error)) {
-  			$result['error'] = __('This username is already registered');
-  		} else if (in_array('existing_user_email', $error)) {
-  			$result['error'] = __("This email address is already registered");
-  		} else {
-  			$result['error'] = $user_id->get_error_message();  			
-  		} */
+				if ( is_wp_error( $logged_user ) ) {
+					$result['error'] = $logged_user->get_error_message();
+				} else {
+					$result['logged_in'] = true;
+				}		
 
-  		$result['error'] = $user_id->get_error_message();
-  		$result['error_code'] = $user_id->get_error_codes();
+	  	} else { // Ocurrio un error
+	  		/*
+	  		$error = $user_id->get_error_codes();
+
+	  		if (in_array('empty_user_login', $error)) {
+	  			$result['error'] = __('The username can not be empty');
+	  		} else if (in_array('existing_user_login', $error)) {
+	  			$result['error'] = __('This username is already registered');
+	  		} else if (in_array('existing_user_email', $error)) {
+	  			$result['error'] = __("This email address is already registered");
+	  		} else {
+	  			$result['error'] = $user_id->get_error_message();  			
+	  		} */
+
+	  		$result['error'] = $user_id->get_error_message();
+	  		$result['error_code'] = $user_id->get_error_codes();
+	  	}
   	}
-
   } else {
-  	$result['error'] = "";
-		//die ( 'Busted!');
+  	$result['error'] = "Invalid security code!";
+  	$result['error_code'] = $user_id->get_error_codes();
   }
 
   header( "Content-Type: application/json" );
@@ -116,7 +138,7 @@ function add_register_form() {
 	</style>
 	<div id='sign_up'>
 		<form id="register_form" class="fs-form">
-			<h2>Became a FindSpark Member!</h2>
+			<h2>Become a FindSpark Member!</h2>
 			<fieldset>
 				<section class="form-error" style="display:none;">
 						<i class="icon-remove-sign"></i>

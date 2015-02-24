@@ -39,9 +39,9 @@ jQuery(document).ready( function() {
 			console.log("response");
 			console.log(response);
 
-			if (response.logged_in === true) {
+			if (response.registered === true || response.logged_in === true) {
 				console.log("Registration Complete!");
-				
+
 				jQuery("#success_text").text("Registration Complete!");
 				jQuery(".form-success").show();
 
