@@ -45,6 +45,10 @@ jQuery(document).ready( function() {
 				jQuery("#success_text").text("Registration Complete!");
 				jQuery(".form-success").show();
 
+				jQuery('html,body').animate({
+					scrollTop: jQuery("#sign_up").offset().top
+				},'fast');
+
 				setTimeout( function() {
 					document.location.href = WPURLS.home;
 					//document.location.href = WPURLS.admin_profile;

@@ -16,9 +16,7 @@ function add_custom_menu( $nav, $args ) {
 add_filter('wp_nav_menu_items','add_custom_menu', 10, 2);
 
 function add_custom_style($hook) {
-	//wp_enqueue_style( 'font-awesome.min.css', get_template_directory_uri() . '/css/font-awesome.min.css' );
 	wp_enqueue_style( 'fs-forms.css', get_template_directory_uri() . '/css/fs-forms.css' );
-
 	wp_enqueue_style( 'colorbox.css', get_template_directory_uri() . '/css/colorbox.css' );
 	wp_enqueue_script( 'jquery.colorbox-min.js', get_template_directory_uri() . '/js/jquery.colorbox-min.js' );
 	wp_enqueue_script( 'popup-init.js', get_template_directory_uri() . '/js/popup-init.js' );	
@@ -31,6 +29,64 @@ function add_custom_style($hook) {
 	));
 }
 add_action( 'wp_enqueue_scripts', 'add_custom_style' );
+
+function send_welcome_email( $user_id ) {
+	$user = get_userdata( $user_id );
+	$admin_email = get_option('admin_email');
+	//$admin_email = "hackmaster777@gmail.com";
+	//$admin_email = "emily@findspark.com";
+
+	// Permitimos contenido HTML en el wp_mail
+	function set_html_content_type() {
+		return 'text/html';
+	}
+	add_filter( 'wp_mail_content_type', 'set_html_content_type' );
+
+	$message = "<div>
+	<p><strong>Registration Details</strong></p>
+	<p><strong>First Name:</strong> {$user->first_name}</p>
+	<p><strong>Last Name:</strong> {$user->last_name}</p>
+	<p><strong>Username:</strong> {$user->user_login}</p>
+	<p><strong>E-mail:</strong> {$user->user_email}</p>
+	<br/>
+	<p>Log in the <a href='". site_url(). "/wp-login.php?redirect_to=" . urlencode( site_url() . "/wp-admin/users.php?role=subscriber&orderby=ID&order=desc") . "' target='_blank'>wp admin</a> for details.</p>
+	</div>";	
+
+	/*
+	$message  = __('Details:') . "\r\n\r\n";
+	$message .= sprintf(__('First Name: %s'), $user->first_name) . "\r\n";
+	$message .= sprintf(__('Last Name: %s'), $user->last_name) . "\r\n";
+	$message .= sprintf(__('Username: %s'), $user->user_login) . "\r\n";
+	$message .= sprintf(__('E-mail: %s'), $user->user_email) . "\r\n";
+	*/
+
+	@wp_mail( $admin_email, __('New job seeker registration on FindSpark'), $message);	
+
+	$message = "<div>
+	Hi {$user->first_name}, <br/>
+	Congratulations! You're now a part of our community of thousands of ambitious young creatives. <br/>
+	Start enjoying the perks! <a href='" . site_url() . "/events' target='_blank'>Attend our events</a> (in-person in NYC and virtual for those of you outside NYC), check out and apply for the best internships and entry-level jobs in NYC on our <a href='" . site_url() . "/jobs' target='_blank'>highly-curated job board</a>, and <a href='" . site_url() . "/blog' target='_blank'>read our blog</a> for tips geared specifically to you.<br/>
+	<br/>
+	Your user name is: <strong>{$user->user_login}</strong> <br/>
+	Your password is hidden for your protection. <br/>
+	<br/>
+	To login to FindSpark, visit <a href='" . site_url() . "/login'>" . site_url() . "/login</a>. If you forgot your password, <a href='" . site_url() . "/wp-login.php?action=lostpassword&amp;redirect_to=" . urlencode( site_url() ) ."'>click here</a>. <br/>
+	<br/>
+	If you ever have suggestions or feedback, reach out to me at emily@findspark.com or Tweet at us <a href='https://twitter.com/findspark' target='_blank'>@FindSpark</a> <br/>
+	<br/>
+	To Career Optimism, <br/>
+	++++++++++++++++++++++++++++++++++ <br/>
+	<font color='#888888'><br>
+	Emily Miethner | <a href='http://linkedin.com/in/EmilyMiethner' target='_blank'>LinkedIn</a> // <a href='https://twitter.com/EmilyMiethner' target='_blank'>Twitter</a> <br/>
+	Founder // <a href='https://findspark.com' target='_blank'>FindSpark</a>
+	</font>
+	</div>";
+
+	wp_mail($user->user_email, __('Welcome to FindSpark!'), $message);
+
+	// Reestablecemos la configuracion del wp_mail para evitar conflictos con otros plugins
+	remove_filter( 'wp_mail_content_type', 'set_html_content_type' );
+}
 
 function ajax_save_data() {
   $result = array();
@@ -81,7 +137,11 @@ function ajax_save_data() {
 	  		$result['registered'] = true;
 
 	  		// Registramos los campos faltantes
-	  		update_user_meta($user_id, 'career_situation', $career_situation);
+	  		update_user_meta( $user_id, 'career_situation', $career_situation );
+
+	  		// Notificamos por correo al usuario y al admin
+	  		//wp_new_user_notification( $user_id, $password );
+	  		send_welcome_email( $user_id, $password );
 
 	  		// Logueamos al usuario en el sitio
 	  		$cred = array(
@@ -90,7 +150,7 @@ function ajax_save_data() {
 					'remember' => false
 				);
 
-				$logged_user = wp_signon($cred, false);
+				$logged_user = wp_signon( $cred, false );
 
 				if ( is_wp_error( $logged_user ) ) {
 					$result['error'] = $logged_user->get_error_message();
@@ -152,7 +212,6 @@ function add_register_form() {
 					<label class="input">
 						<i class="icon-append icon-user"></i>
 						<input type="text" name="firstname" id="firstname" placeholder="First Name" autocomplete="off" />
-						<!--b class="tooltip tooltip-bottom-right">Only characters and numbers</b-->
 					</label>
 				</section>
 				<section>
