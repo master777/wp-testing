@@ -53,6 +53,16 @@ jQuery(document).ready( function() {
 		target_row = jQuery('#year-graduation').closest("tr");
 		current_row.insertAfter(target_row);
 
+		// Inicializamos el datepicker
+		var current_date = new Date();
+		jQuery("#birth-date").datepicker({
+			changeYear: true,
+			changeMonth: true,
+			yearRange: '1920:' + current_date.getFullYear(),
+			dateFormat: "yy/mm/dd",
+			defaultDate: new Date((current_date.getFullYear() - 30), current_date.getMonth(), current_date.getDate())
+		});
+
 		// Inicializamos la funcion de autocompletar para ciertos campos del perfil.
 		var autofill_fields = {
 			'college-attended' : {

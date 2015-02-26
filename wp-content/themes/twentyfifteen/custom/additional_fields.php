@@ -10,6 +10,9 @@ function add_custom_scripts( $hook ) {
 		);
 		wp_localize_script( 'custom_script.js', 'WPURLS', $var_list );
 
+		// Para el datepicker
+		wp_enqueue_style( 'jquery-ui.min.css', get_template_directory_uri() . '/css/jquery-ui.min.css' );
+		wp_enqueue_script( 'jquery-ui.min.js', get_template_directory_uri() . '/js/jquery-ui.min.js' );
 		// Para la funcion de autocompletar:
 		wp_enqueue_style( 'jquery.tokenize.css', get_template_directory_uri() . '/css/jquery.tokenize.css' );
 		wp_enqueue_script( 'jquery.tokenize.js', get_template_directory_uri() . '/js/jquery.tokenize.js' );
@@ -839,8 +842,8 @@ function add_custom_fields( $user ) {
 	<table class="form-table">
 		<tbody>
 			<tr>
-				<th><label for="age">Age</label></th>
-				<td><input type="text" id="age" name="age" value="<?php echo esc_attr( get_the_author_meta( 'age', $user->ID ) ); ?>" class="regular-text" /></td>
+				<th><label for="birth-date">Date of Birth</label></th>
+				<td><input type="text" id="birth-date" name="birth-date" value="<?php echo esc_attr( get_the_author_meta( 'birth_date', $user->ID ) ); ?>" class="regular-text" autocomplete="off" /></td>
 			</tr>
 			<tr>
 				<th><label for="ethnicity">Ethnicity</label></th>
@@ -977,7 +980,7 @@ function save_custom_fields( $user_id ) {
 			}
 		}
 
-		update_user_meta( $user_id, 'age', sanitize_text_field( $_POST['age'] ) );
+		update_user_meta( $user_id, 'birth_date', sanitize_text_field( $_POST['birth-date'] ) );
 		update_user_meta( $user_id, 'ethnicity', $_POST['ethnicity'] );
 
 		if ( $_FILES['resume']['error'] === UPLOAD_ERR_OK ) {
