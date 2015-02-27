@@ -14,10 +14,6 @@ jQuery(document).ready( function() {
 			return false;
 		}
 
-		// Limpiamos el mensaje de error y lo ocultamos
-		jQuery("#error_text").text();
-		jQuery(".form-error").hide();
-
 		var security_code = WPURLS.ajax_register_nonce;
 
 		// Creamos el objecto
@@ -32,37 +28,48 @@ jQuery(document).ready( function() {
 			nonce: security_code
 		}
 
-		console.log("data");
-		console.log(data);
+		//console.log("data");
+		//console.log(data);
 
 		jQuery.post(WPURLS.ajaxurl, data, function(response) {
-			console.log("response");
-			console.log(response);
+			//console.log("response");
+			//console.log(response);
 
-			if (response.registered === true || response.logged_in === true) {
-				console.log("Registration Complete!");
+			// Limpiamos y ocultamos la seccion de errores
+			jQuery("#error_text").text();
+			jQuery(".form-error").hide();
 
-				jQuery("#success_text").text("Registration Complete!");
-				jQuery(".form-success").show();
+			if (response.error) {
+				//console.log("Error: " + response.error);
 
-				jQuery('html,body').animate({
-					scrollTop: jQuery("#sign_up").offset().top
-				},'fast');
-
-				setTimeout( function() {
-					document.location.href = WPURLS.home;
-					//document.location.href = WPURLS.admin_profile;
-				}, 2000);
-
-			} else if (response.error) {
-				console.log("Error: " + response.error);
-
+				// Mostramos el error
 				jQuery("#error_text").text(response.error);
 				jQuery(".form-error").show();
 
 				jQuery('html,body').animate({
 					scrollTop: jQuery("#sign_up").offset().top
 				},'fast');
+
+			} else {
+
+				if (response.registered === true) {
+					//console.log("Registration Complete!");
+
+					jQuery("#success_text").text("Registration Complete!");
+					jQuery(".form-success").show();
+
+					jQuery('html,body').animate({
+						scrollTop: jQuery("#sign_up").offset().top
+					},'fast');
+				}
+
+				// if (response.logged_in === true) {
+					setTimeout( function() {
+						document.location.reload();
+						//document.location.href = WPURLS.home;
+						//document.location.href = WPURLS.admin_profile;
+					}, 2000);					
+				// }
 			}
 		});
 	});

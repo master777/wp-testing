@@ -15,6 +15,23 @@ function add_custom_menu( $nav, $args ) {
 }
 add_filter('wp_nav_menu_items','add_custom_menu', 10, 2);
 
+// Agregamos un shortcode para crear un boton que muestre el popup
+function add_signup_button($params = array()) {
+	if (!is_user_logged_in()) {
+		$params = shortcode_atts( array(
+			"name" => "Register Now"
+		), $params);
+
+		return "<div style='text-align: center;'><a class='sign_up orange-button' href='#sign_up'>" . $params['name'] . "</a></div>";
+		
+	} else {
+
+		return "";
+	}
+}
+add_shortcode( 'signup_popup', 'add_signup_button' );
+
+// Incorporamos en el frontend los css y js que necesitamos para el popup
 function add_custom_style($hook) {
 	wp_enqueue_style( 'fs-forms.css', get_template_directory_uri() . '/css/fs-forms.css' );
 	wp_enqueue_style( 'colorbox.css', get_template_directory_uri() . '/css/colorbox.css' );
@@ -92,90 +109,100 @@ function ajax_save_data() {
   $result = array();
 
   if ( wp_verify_nonce( $_POST['nonce'], 'ajax_register_nonce' ) ) {
-  	$username = sanitize_text_field($_POST['username']);
-  	$password = sanitize_text_field($_POST['password']);
-  	$email = sanitize_text_field($_POST['email']);
-  	$firstname = sanitize_text_field($_POST['firstname']);
-  	$lastname = sanitize_text_field($_POST['lastname']);
+  	// Verificamos si existe un usuario logueado en el sistema
+  	if ( is_user_logged_in() ) {
 
-  	// Custom Fields
-  	$career_situation = sanitize_text_field($_POST['career_situation']);
+  		$result['registered'] = false;
+  		$result['logged_in'] = true;
 
-  	// Validamos los campos
-  	if (empty($firstname)) {
-  		$result['error'] = "The first name is required!";
-  	} else if (!preg_match("/^[a-zA-Z ]*$/", $firstname)) {
-  		$result['error'] = "Please only letters to first name!";
-  	} else if (empty($lastname)) {
-  		$result['error'] = "The last name is required!";
-  	} else if (!preg_match("/^[a-zA-Z ]*$/", $lastname)) {
-  		$result['error'] = "Please only letters to last name!";  	
-  	} else if (empty($username)) {
-  		$result['error'] = "The username is required!";
-		} else if (empty($email)) {
-  		$result['error'] = "The email address is required!";
-  	} else if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-		  $result['error'] = "Invalid email address!";
-  	} else if (empty($password)) {
-  		$result['error'] = "The password is required!";
-  	} else if (strlen($password) < 6) {
-  		$result['error'] = "The password must be at least 6 characters!";  	
-		} else {
-			// Intentamos registrar al usuario
-	  	$user = array(
-	  		'user_login' => $username,
-	  		'user_pass' => $password,
-	  		'first_name' => $firstname,
-	  		'last_name' => $lastname,
-	  		'display_name' => $firstname . ' ' . $lastname,
-	  		'user_email' => $email,
-	  		'role' => 'subscriber'
-	  	);
+  	} else {
 
-	  	$user_id = wp_insert_user($user);
-	  	if ( !is_wp_error( $user_id ) ) {
-	  		$result['registered'] = true;
+	  	$username = sanitize_text_field($_POST['username']);
+	  	$password = sanitize_text_field($_POST['password']);
+	  	$email = sanitize_text_field($_POST['email']);
+	  	$firstname = sanitize_text_field($_POST['firstname']);
+	  	$lastname = sanitize_text_field($_POST['lastname']);
 
-	  		// Registramos los campos faltantes
-	  		update_user_meta( $user_id, 'career_situation', $career_situation );
+	  	// Custom Fields
+	  	$career_situation = sanitize_text_field($_POST['career_situation']);
 
-	  		// Notificamos por correo al usuario y al admin
-	  		//wp_new_user_notification( $user_id, $password );
-	  		send_welcome_email( $user_id, $password );
+	  	// Validamos los campos
+	  	if (empty($firstname)) {
+	  		$result['error'] = "The first name is required!";
+	  	} else if (!preg_match("/^[a-zA-Z ]*$/", $firstname)) {
+	  		$result['error'] = "Please only letters to first name!";
+	  	} else if (empty($lastname)) {
+	  		$result['error'] = "The last name is required!";
+	  	} else if (!preg_match("/^[a-zA-Z ]*$/", $lastname)) {
+	  		$result['error'] = "Please only letters to last name!";  	
+	  	} else if (empty($username)) {
+	  		$result['error'] = "The username is required!";
+			} else if (empty($email)) {
+	  		$result['error'] = "The email address is required!";
+	  	} else if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+			  $result['error'] = "Invalid email address!";
+	  	} else if (empty($password)) {
+	  		$result['error'] = "The password is required!";
+	  	} else if (strlen($password) < 6) {
+	  		$result['error'] = "The password must be at least 6 characters!";  	
+			} else {
+				// Intentamos registrar al usuario
+		  	$user = array(
+		  		'user_login' => $username,
+		  		'user_pass' => $password,
+		  		'first_name' => $firstname,
+		  		'last_name' => $lastname,
+		  		'display_name' => $firstname . ' ' . $lastname,
+		  		'user_email' => $email,
+		  		'role' => 'subscriber'
+		  	);
 
-	  		// Logueamos al usuario en el sitio
-	  		$cred = array(
-					'user_login' => $username,
-					'user_password' => $password,
-					'remember' => false
-				);
+		  	$user_id = wp_insert_user($user);
+		  	if ( !is_wp_error( $user_id ) ) {
+		  		$result['registered'] = true;
 
-				$logged_user = wp_signon( $cred, false );
+		  		// Registramos los campos faltantes
+		  		update_user_meta( $user_id, 'career_situation', $career_situation );
 
-				if ( is_wp_error( $logged_user ) ) {
-					$result['error'] = $logged_user->get_error_message();
-				} else {
-					$result['logged_in'] = true;
-				}		
+		  		// Notificamos por correo al usuario y al admin
+		  		//wp_new_user_notification( $user_id, $password );
+		  		send_welcome_email( $user_id, $password );
 
-	  	} else { // Ocurrio un error
-	  		/*
-	  		$error = $user_id->get_error_codes();
+		  		// Logueamos al usuario en el sitio
+		  		$cred = array(
+						'user_login' => $username,
+						'user_password' => $password,
+						'remember' => false
+					);
 
-	  		if (in_array('empty_user_login', $error)) {
-	  			$result['error'] = __('The username can not be empty');
-	  		} else if (in_array('existing_user_login', $error)) {
-	  			$result['error'] = __('This username is already registered');
-	  		} else if (in_array('existing_user_email', $error)) {
-	  			$result['error'] = __("This email address is already registered");
-	  		} else {
-	  			$result['error'] = $user_id->get_error_message();  			
-	  		} */
+					$logged_user = wp_signon( $cred, false );
 
-	  		$result['error'] = $user_id->get_error_message();
-	  		$result['error_code'] = $user_id->get_error_codes();
+					if ( is_wp_error( $logged_user ) ) {
+						$result['error'] = $logged_user->get_error_message();
+					} else {
+						$result['logged_in'] = true;
+					}		
+
+		  	} else { // Ocurrio un error
+		  		/*
+		  		$error = $user_id->get_error_codes();
+
+		  		if (in_array('empty_user_login', $error)) {
+		  			$result['error'] = __('The username can not be empty');
+		  		} else if (in_array('existing_user_login', $error)) {
+		  			$result['error'] = __('This username is already registered');
+		  		} else if (in_array('existing_user_email', $error)) {
+		  			$result['error'] = __("This email address is already registered");
+		  		} else {
+		  			$result['error'] = $user_id->get_error_message();  			
+		  		} */
+
+		  		$result['error'] = $user_id->get_error_message();
+		  		$result['error_code'] = $user_id->get_error_codes();
+		  	}
 	  	}
   	}
+
   } else {
   	$result['error'] = "Invalid security code!";
   	$result['error_code'] = $user_id->get_error_codes();
@@ -190,7 +217,7 @@ add_action( 'wp_ajax_nopriv_save_data_action', 'ajax_save_data' );
 add_action( 'wp_ajax_save_data_action', 'ajax_save_data' );
 
 function add_register_form() {
-	if (!is_user_logged_in()) {
+	// if (!is_user_logged_in()) {
 	?>
 <div style='display:none'>
 	<style type="text/css">
@@ -274,6 +301,6 @@ function add_register_form() {
 	</div>
 </div>
 	<?php
-	}
+	// }
 }
 add_action( 'wp_head', 'add_register_form' );

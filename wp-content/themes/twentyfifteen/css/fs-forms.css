@@ -1733,3 +1733,26 @@
 	display: inline-block; 
 	padding-right: 5px;
 }
+
+a.orange-button {
+	border-style: solid;	
+	border-color: #fc6700;
+	border-width: 5px 15px 5px 15px;
+	width: 9em;
+	height: 2em;
+	background: #fc6700;
+	color: #fff !important;
+	line-height: 2;
+	text-align: center;
+	font-weight: 900;
+	text-decoration: none;
+}
+
+a.orange-button:hover, a.orange-button:active, a.orange-button:visited, a.orange-button:link {
+	border-style: solid;
+	border-color: #fc6700;
+	border-width: 5px 15px 5px 15px;
+	background: #fc6700;
+	color: #fff !important;
+	text-decoration: none;
+}
