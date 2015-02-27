@@ -3,13 +3,21 @@ Pasos para una correcta actualizacion en staging/live:
 ========================================================
 
 1) Subir las carpetas en este orden:
-css/
 custom/
 fonts/
 
 2) Subir los archivos:
 
 public-user-profile.php
+
+css/colorbox.css
+css/fs-forms.css
+css/jquery.tokenize.css
+css/jquery-ui.min.css
+css/jquery-ui.structure.min.css
+css/jquery-ui.theme.min.css
+css/font-awesome.css
+css/font-awesome.min.css
 
 js/custom_script.js
 js/jquery.colorbox-min.js
