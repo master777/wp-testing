@@ -1,0 +1,88 @@
+========================================================
+Pasos para una correcta actualizacion en staging/live:
+========================================================
+
+1) Subir las carpetas en este orden:
+css/
+custom/
+fonts/
+
+2) Subir los archivos:
+
+public-user-profile.php
+
+js/custom_script.js
+js/jquery.colorbox-min.js
+js/jquery.tokenize.js
+js/popup-init.js
+js/jquery-ui.min.js
+
+images/border1.png
+images/border2.png
+images/loading.gif
+images/medal_bronze.png
+images/profile-default.png
+images/square-facebook-128.png
+images/square-google-plus-128.png
+images/square-linkedin-128.png
+images/square-twitter-128.png
+images/square-yahoo-128.png
+images/ui-icons_444444_256x240.png
+images/ui-icons_555555_256x240.png
+images/ui-icons_777620_256x240.png
+images/ui-icons_777777_256x240.png
+images/ui-icons_cc0000_256x240.png
+images/ui-icons_ffffff_256x240.png
+
+
+3) Ingresar como administrador en el sitio y crear una pagina en blanco llamada "My Profile" con un permalink de "/profile".
+Luego elegir el template "User Profile (Public)" y guardar los cambios.
+
+IMPORTANTE: Tomar nota del ID de la pagina creada. (En el staging es 19812)
+
+4) Editar el archivo "custom/profile_url.pnp" y modificar el page_id (linea 10) con el ID obtenido en el anterior paso.
+En el staging quedaria asi:
+'index.php?page_id=19812&user=$matches[1]'
+
+Una vez modificado el archivo, volver a resubirlo.
+
+
+5) Crear un backup de functions.php y despues modificar lo siguiente:
+
+(Antes de la primera linea de CODIGO -> Linea 41)
+-----------------------------
+/**
+ * Allow the use of url for public profiles.
+ */
+require get_template_directory() . '/custom/profile_url.php';
+-----------------------------
+
+(Al final del archivo -> Linea 1017)
+-----------------------------
+/**
+ * Add additional fields to job seeker profiles.
+ */
+require get_template_directory(). '/custom/additional_fields.php';
+
+/**
+ * Add popup register form in the frontend.
+ */
+require get_template_directory(). '/custom/popup-signup.php';
+-----------------------------
+
+
+6) En este punto ya deberian reflejarse los cambios en el sitio, restando solamente lo de las URLs de los perfiles publicos.
+Para ello ingresar como administrador y ir a 
+    Settings -> Permalinks -> Save Changes (SIN MODIFICAR NADA)
+
+
+NOTA: 
+- Tanto en live como en el staging hay un problema con el color del boton "Apply for Jobs" (aparece todo en blanco).
+Esto puede solucionarse con agregando la class "lightblue-menu" a ese menu.
+
+- Los siguientes archivos son diferentes en cada servidor (local, staging, live) y se debe tener cuidado al subirlos:
+    functions.php
+    custom/profile_url.php
+    custom/popup-signup.php
+
+- Los archivos font-awesome.css y font-awesome.min.css no estan siendo utilizados porque el fs-form.css llama directamente a la carpeta "fonts".
