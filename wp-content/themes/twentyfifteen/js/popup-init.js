@@ -113,4 +113,23 @@ jQuery(document).ready( function() {
       }
     });
   });
+  
+  jQuery("#register_form").keypress(function (e) {
+    if ((e.which && e.which == 13) || (e.keyCode && e.keyCode == 13)) {
+      jQuery('#register_button').click();
+      return false;
+    } else {
+      return true;
+    }
+  });
+
+  jQuery("#login_form").keypress(function (e) {
+    if ((e.which && e.which == 13) || (e.keyCode && e.keyCode == 13)) {
+      jQuery('#login_button').click();
+      return false;
+    } else {
+      return true;
+    }
+  });
+
 });
