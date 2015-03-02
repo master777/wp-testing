@@ -36,66 +36,66 @@ add_shortcode( 'signup_popup', 'add_signup_button' );
 
 // Incorporamos en el frontend los css y js que necesitamos para el popup
 function add_custom_style($hook) {
-	wp_enqueue_style( 'fs-forms.css', get_template_directory_uri() . '/css/fs-forms.css' );
-	wp_enqueue_style( 'colorbox.css', get_template_directory_uri() . '/css/colorbox.css' );
-	wp_enqueue_script( 'jquery.colorbox-min.js', get_template_directory_uri() . '/js/jquery.colorbox-min.js' );
-	wp_enqueue_script( 'popup-init.js', get_template_directory_uri() . '/js/popup-init.js' );	
+  wp_enqueue_style( 'fs-forms.css', get_template_directory_uri() . '/css/fs-forms.css' );
+  wp_enqueue_style( 'colorbox.css', get_template_directory_uri() . '/css/colorbox.css' );
+  wp_enqueue_script( 'jquery.colorbox-min.js', get_template_directory_uri() . '/js/jquery.colorbox-min.js' );
+  wp_enqueue_script( 'popup-init.js', get_template_directory_uri() . '/js/popup-init.js' ); 
 
-	wp_localize_script( 'popup-init.js', 'WPURLS', array(
-		'ajaxurl' => admin_url( 'admin-ajax.php' ),
-		'ajax_register_nonce' => wp_create_nonce( 'ajax_register_nonce' ),
-		'home' => home_url(),
-		'admin_profile' => admin_url( 'profile.php' )
-	));
+  wp_localize_script( 'popup-init.js', 'WPURLS', array(
+    'ajaxurl' => admin_url( 'admin-ajax.php' ),
+    'ajax_register_nonce' => wp_create_nonce( 'ajax_register_nonce' ),
+    'home' => home_url(),
+    'admin_profile' => admin_url( 'profile.php' )
+  ));
 }
 add_action( 'wp_enqueue_scripts', 'add_custom_style' );
 
 function send_welcome_email( $user_id ) {
-	$user = get_userdata( $user_id );
-	$admin_email = get_option('admin_email');
+  $user = get_userdata( $user_id );
+  $admin_email = get_option('admin_email');
 
-	// Permitimos contenido HTML en el wp_mail
-	function set_html_content_type() {
-		return 'text/html';
-	}
-	add_filter( 'wp_mail_content_type', 'set_html_content_type' );
+  // Permitimos contenido HTML en el wp_mail
+  function set_html_content_type() {
+    return 'text/html';
+  }
+  add_filter( 'wp_mail_content_type', 'set_html_content_type' );
 
-	$message = "<div>
-	<p><strong>Registration Details</strong></p>
-	<p><strong>First Name:</strong> {$user->first_name}</p>
-	<p><strong>Last Name:</strong> {$user->last_name}</p>
-	<p><strong>Username:</strong> {$user->user_login}</p>
-	<p><strong>E-mail:</strong> {$user->user_email}</p>
-	<br/>
-	<p>Log in the <a href='". site_url(). "/wp-login.php?redirect_to=" . urlencode( site_url() . "/wp-admin/users.php?role=subscriber&orderby=ID&order=desc") . "' target='_blank'>wp admin</a> for details.</p>
-	</div>";	
+  $message = "<div>
+  <p><strong>Registration Details</strong></p>
+  <p><strong>First Name:</strong> {$user->first_name}</p>
+  <p><strong>Last Name:</strong> {$user->last_name}</p>
+  <p><strong>Username:</strong> {$user->user_login}</p>
+  <p><strong>E-mail:</strong> {$user->user_email}</p>
+  <br/>
+  <p>Log in the <a href='". site_url(). "/wp-login.php?redirect_to=" . urlencode( site_url() . "/wp-admin/users.php?role=subscriber&orderby=ID&order=desc") . "' target='_blank'>wp admin</a> for details.</p>
+  </div>";  
 
-	@wp_mail( $admin_email, __('New job seeker registration on FindSpark'), $message);	
+  @wp_mail( $admin_email, __('New job seeker registration on FindSpark'), $message);  
 
-	$message = "<div>
-	Hi {$user->first_name}, <br/>
-	Congratulations! You're now a part of our community of thousands of ambitious young creatives. <br/>
-	Start enjoying the perks! <a href='" . site_url() . "/events' target='_blank'>Attend our events</a> (in-person in NYC and virtual for those of you outside NYC), check out and apply for the best internships and entry-level jobs in NYC on our <a href='" . site_url() . "/jobs' target='_blank'>highly-curated job board</a>, and <a href='" . site_url() . "/blog' target='_blank'>read our blog</a> for tips geared specifically to you.<br/>
-	<br/>
-	Your user name is: <strong>{$user->user_login}</strong> <br/>
-	Your password is hidden for your protection. <br/>
-	<br/>
-	To login to FindSpark, visit <a href='" . site_url() . "/login'>" . site_url() . "/login</a>. If you forgot your password, <a href='" . site_url() . "/wp-login.php?action=lostpassword&amp;redirect_to=" . urlencode( site_url() ) ."'>click here</a>. <br/>
-	<br/>
-	If you ever have suggestions or feedback, reach out to me at emily@findspark.com or Tweet at us <a href='https://twitter.com/findspark' target='_blank'>@FindSpark</a> <br/>
-	<br/>
-	To Career Optimism, <br/>
-	++++++++++++++++++++++++++++++++++ <br/>
-	<font color='#888888'><br>
-	Emily Miethner | <a href='http://linkedin.com/in/EmilyMiethner' target='_blank'>LinkedIn</a> // <a href='https://twitter.com/EmilyMiethner' target='_blank'>Twitter</a> <br/>
-	Founder // <a href='https://findspark.com' target='_blank'>FindSpark</a>
-	</font>
-	</div>";
+  $message = "<div>
+  Hi {$user->first_name}, <br/>
+  Congratulations! You're now a part of our community of thousands of ambitious young creatives. <br/>
+  Start enjoying the perks! <a href='" . site_url() . "/events' target='_blank'>Attend our events</a> (in-person in NYC and virtual for those of you outside NYC), check out and apply for the best internships and entry-level jobs in NYC on our <a href='" . site_url() . "/jobs' target='_blank'>highly-curated job board</a>, and <a href='" . site_url() . "/blog' target='_blank'>read our blog</a> for tips geared specifically to you.<br/>
+  <br/>
+  Your user name is: <strong>{$user->user_login}</strong> <br/>
+  Your password is hidden for your protection. <br/>
+  <br/>
+  To login to FindSpark, visit <a href='" . site_url() . "/login'>" . site_url() . "/login</a>. If you forgot your password, <a href='" . site_url() . "/wp-login.php?action=lostpassword&amp;redirect_to=" . urlencode( site_url() ) ."'>click here</a>. <br/>
+  <br/>
+  If you ever have suggestions or feedback, reach out to me at emily@findspark.com or Tweet at us <a href='https://twitter.com/findspark' target='_blank'>@FindSpark</a> <br/>
+  <br/>
+  To Career Optimism, <br/>
+  ++++++++++++++++++++++++++++++++++ <br/>
+  <font color='#888888'><br>
+  Emily Miethner | <a href='http://linkedin.com/in/EmilyMiethner' target='_blank'>LinkedIn</a> // <a href='https://twitter.com/EmilyMiethner' target='_blank'>Twitter</a> <br/>
+  Founder // <a href='https://findspark.com' target='_blank'>FindSpark</a>
+  </font>
+  </div>";
 
-	wp_mail($user->user_email, __('Welcome to FindSpark!'), $message);
+  wp_mail($user->user_email, __('Welcome to FindSpark!'), $message);
 
-	// Reestablecemos la configuracion del wp_mail para evitar conflictos con otros plugins
-	remove_filter( 'wp_mail_content_type', 'set_html_content_type' );
+  // Reestablecemos la configuracion del wp_mail para evitar conflictos con otros plugins
+  remove_filter( 'wp_mail_content_type', 'set_html_content_type' );
 }
 
 function ajax_save_data() {
@@ -168,6 +168,9 @@ function ajax_save_data() {
             'remember' => false
           );
 
+          // Removemos todas los "hooks" pertenecientes al fallo de inicio de sesion
+          remove_all_actions( 'wp_login_failed' );
+
           $logged_user = wp_signon( $cred, false );
 
           if ( is_wp_error( $logged_user ) ) {
@@ -207,11 +210,13 @@ function ajax_login_action() {
         'remember' => !empty($_POST['remember']) ? true : false
       );
 
+      // Removemos todas los "hooks" pertenecientes al fallo de inicio de sesion
+      remove_all_actions( 'wp_login_failed' );
+
       $logged_user = wp_signon( $cred, false );
 
       if ( is_wp_error( $logged_user ) ) {
-        //$result['error'] = $logged_user->get_error_message();
-        $result['error'] = 'Wrong username or password!&nbsp;<a href="' . site_url() . '/wp-login.php?action=lostpassword&amp;redirect_to='. urlencode(site_url()) . '" target="_blank" style="color: #4F8A10; text-decoration: underline;">Lost your Password?</a>';
+        $result['error'] = 'Wrong username or password!&nbsp;<a href="' . site_url() . '/wp-login.php?action=lostpassword&amp;redirect_to='. urlencode(site_url()) . '" target="_blank" style="color: #4F8A10; text-decoration: underline;">Lost your Password?</a>';        
       } else {
         $result['logged_in'] = true;
         $result['success'] = "Login successful, redirecting...";
@@ -228,82 +233,82 @@ add_action( 'wp_ajax_nopriv_login_action', 'ajax_login_action' );
 add_action( 'wp_ajax_login_action', 'ajax_login_action' );
 
 function add_register_form() {
-	?>
+  ?>
 <div style='display:none'>
-	<div id='sign_up'>
-		<form id="register_form" class="fs-form">
-			<h2>Become a FindSpark Member!</h2>
-			<fieldset>
-				<section class="form-error" style="display:none;">
-						<i class="icon-remove-sign"></i>
-						<label id="error_text"></label>
-				</section>
-				<section class="form-success" style="display:none;">
-						<i class="icon-ok-sign"></i>
-						<label id="success_text"></label>
-				</section>
-				<section>
-					<label class="input">
-						<i class="icon-append icon-user"></i>
-						<input type="text" name="firstname" id="firstname" placeholder="First Name" autocomplete="off" />
-					</label>
-				</section>
-				<section>
-					<label class="input">
-						<i class="icon-append icon-user"></i>
-						<input type="text" name="lastname" id="lastname" placeholder="Last Name" autocomplete="off" />
-					</label>
-				</section>
-				<section>
-					<label class="input">
-						<i class="icon-append icon-user"></i>
-						<input type="text" name="username" id="username" placeholder="Username" autocomplete="off" />
-					</label>
-				</section>
-				<section>
-					<label class="input">
-						<i class="icon-append icon-envelope-alt"></i>
-						<input type="text" name="email" id="email" placeholder="E-mail" autocomplete="off" />
-					</label>
-				</section>
-				<section>
-					<label class="input">
-						<i class="icon-append icon-lock"></i>
-						<input type="password" name="password" id="password" placeholder="Password" autocomplete="off" />
-					</label>
-				</section>
-			</fieldset>
-			<fieldset>
-				<section>
-					<strong>What best describes your current career situation?</strong>
-					<div>
-						<input type="radio" id="career-situation-1" name="career-situation" value="1" checked="checked"/>
-						<label for="career-situation-1" class="pointer">Student, actively seeking internships</label>
-					</div>
-					<div>
-						<input type="radio" id="career-situation-2" name="career-situation" value="2" />
-						<label for="career-situation-2" class="pointer">Student, actively seeking first full-time job</label>
-					</div>
-					<div>
-						<input type="radio" id="career-situation-3" name="career-situation" value="3" />
-						<label for="career-situation-3" class="pointer">Unemployed, actively seeking full-time employment</label>
-					</div>
-					<div>
-						<input type="radio" id="career-situation-4" name="career-situation" value="4" />
-						<label for="career-situation-4" class="pointer">Employed, actively seeking new full-time opportunities</label>
-					</div>
-					<div>
-						<input type="radio" id="career-situation-5" name="career-situation" value="5" />
-						<label for="career-situation-5" class="pointer">Employed, open to new opportunities</label>
-					</div>
-				</section>
-				<section>
-					<input type="checkbox" id="agree" name="agree" value="1" /> I agree to the <strong><a href="<?php echo site_url(); ?>/terms" target="_blank">FindSpark Terms &amp; Conditions</a></strong>
-				</section>
-			</fieldset>
-			<div class="form-footer">
-				<input type="button" class="button" name="register_button" id="register_button" value="Register" />
-			</div>
+  <div id='sign_up'>
+    <form id="register_form" class="fs-form">
+      <h2>Become a FindSpark Member!</h2>
+      <fieldset>
+        <section class="form-error" style="display:none;">
+            <i class="icon-remove-sign"></i>
+            <label id="error_text"></label>
+        </section>
+        <section class="form-success" style="display:none;">
+            <i class="icon-ok-sign"></i>
+            <label id="success_text"></label>
+        </section>
+        <section>
+          <label class="input">
+            <i class="icon-append icon-user"></i>
+            <input type="text" name="firstname" id="firstname" placeholder="First Name" autocomplete="off" />
+          </label>
+        </section>
+        <section>
+          <label class="input">
+            <i class="icon-append icon-user"></i>
+            <input type="text" name="lastname" id="lastname" placeholder="Last Name" autocomplete="off" />
+          </label>
+        </section>
+        <section>
+          <label class="input">
+            <i class="icon-append icon-user"></i>
+            <input type="text" name="username" id="username" placeholder="Username" autocomplete="off" />
+          </label>
+        </section>
+        <section>
+          <label class="input">
+            <i class="icon-append icon-envelope-alt"></i>
+            <input type="text" name="email" id="email" placeholder="E-mail" autocomplete="off" />
+          </label>
+        </section>
+        <section>
+          <label class="input">
+            <i class="icon-append icon-lock"></i>
+            <input type="password" name="password" id="password" placeholder="Password" autocomplete="off" />
+          </label>
+        </section>
+      </fieldset>
+      <fieldset>
+        <section>
+          <strong>What best describes your current career situation?</strong>
+          <div>
+            <input type="radio" id="career-situation-1" name="career-situation" value="1" checked="checked"/>
+            <label for="career-situation-1" class="pointer">Student, actively seeking internships</label>
+          </div>
+          <div>
+            <input type="radio" id="career-situation-2" name="career-situation" value="2" />
+            <label for="career-situation-2" class="pointer">Student, actively seeking first full-time job</label>
+          </div>
+          <div>
+            <input type="radio" id="career-situation-3" name="career-situation" value="3" />
+            <label for="career-situation-3" class="pointer">Unemployed, actively seeking full-time employment</label>
+          </div>
+          <div>
+            <input type="radio" id="career-situation-4" name="career-situation" value="4" />
+            <label for="career-situation-4" class="pointer">Employed, actively seeking new full-time opportunities</label>
+          </div>
+          <div>
+            <input type="radio" id="career-situation-5" name="career-situation" value="5" />
+            <label for="career-situation-5" class="pointer">Employed, open to new opportunities</label>
+          </div>
+        </section>
+        <section>
+          <input type="checkbox" id="agree" name="agree" value="1" /> I agree to the <strong><a href="<?php echo site_url(); ?>/terms" target="_blank">FindSpark Terms &amp; Conditions</a></strong>
+        </section>
+      </fieldset>
+      <div class="form-footer">
+        <input type="button" class="button" name="register_button" id="register_button" value="Register" />
+      </div>
       <fieldset>
         <section>Already a member? <strong><a class="log_in" href="#log_in">Log In</a></section></strong>
       </fieldset>
