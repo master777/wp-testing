@@ -1,13 +1,16 @@
 jQuery(document).ready( function() {
 	
-	jQuery(".sign_up").colorbox({
-		inline: true,
-		width: "500px" // "50%"
-	});
+  jQuery(".sign_up").colorbox({
+    inline: true,
+    width: "500px" // "50%"
+  });
+  jQuery(".log_in").colorbox({
+    inline: true,
+    width: "500px" // "50%"
+  });
 
 	// Ajax Request - Save Data
 	jQuery('#register_button').click( function( evt ) {
-		evt.preventDefault();
 
 		if (jQuery("#register_form input[name='agree']:checked").val() != 1) {
 			alert("You must agree to the Terms and Conditions!");			
@@ -28,23 +31,16 @@ jQuery(document).ready( function() {
 			nonce: security_code
 		}
 
-		//console.log("data");
-		//console.log(data);
-
 		jQuery.post(WPURLS.ajaxurl, data, function(response) {
-			//console.log("response");
-			//console.log(response);
 
 			// Limpiamos y ocultamos la seccion de errores
-			jQuery("#error_text").text();
+			jQuery("#register_form #error_text").html();
 			jQuery(".form-error").hide();
 
 			if (response.error) {
-				//console.log("Error: " + response.error);
-
 				// Mostramos el error
-				jQuery("#error_text").text(response.error);
-				jQuery(".form-error").show();
+				jQuery("#register_form #error_text").html(response.error);
+				jQuery("#register_form .form-error").show();
 
 				jQuery('html,body').animate({
 					scrollTop: jQuery("#sign_up").offset().top
@@ -52,26 +48,69 @@ jQuery(document).ready( function() {
 
 			} else {
 
-				if (response.registered === true) {
-					//console.log("Registration Complete!");
-
-					jQuery("#success_text").text("Registration Complete!");
-					jQuery(".form-success").show();
+				if (response.success) {
+					jQuery("#register_form #success_text").html(response.success);
+					jQuery("#register_form .form-success").show();
 
 					jQuery('html,body').animate({
 						scrollTop: jQuery("#sign_up").offset().top
 					},'fast');
 				}
 
-				// if (response.logged_in === true) {
+				if (response.registered === true || response.logged_in === true) {
 					setTimeout( function() {
 						document.location.reload();
 						//document.location.href = WPURLS.home;
 						//document.location.href = WPURLS.admin_profile;
 					}, 2000);					
-				// }
+				}
 			}
 		});
 	});
+  
+  // Ajax Request - Login Action
+  jQuery('#login_button').click( function( evt ) {
 
+    var data = {
+      action: 'login_action', // es el nombre de la accion "wp_ajax_login_action" sin el "wp_ajax_"
+      username: jQuery("form#login_form #username").val(),
+      password: jQuery("form#login_form #password").val(),
+      nonce: jQuery("form#login_form #security_code").val(),
+      remember: jQuery("form#login_form #remember_me").val(),
+    };
+
+    jQuery.post(WPURLS.ajaxurl, data, function(response) {
+
+      // Limpiamos y ocultamos la seccion de errores
+      jQuery("#login_form #login_error_text").html();
+      jQuery(".form-error").hide();
+
+      if (response.error) {
+        // Mostramos el error
+        jQuery("#login_form #login_error_text").html(response.error);
+        jQuery("#login_form .form-error").show();
+
+        jQuery('html,body').animate({
+          scrollTop: jQuery("#log_in").offset().top
+        },'fast');
+
+      } else {
+
+        if (response.success) {
+          jQuery("#login_form #login_success_text").html(response.success);
+          jQuery("#login_form .form-success").show();
+
+          jQuery('html,body').animate({
+            scrollTop: jQuery("#sign_up").offset().top
+          },'fast');
+        }
+
+        if (response.logged_in === true) {
+          setTimeout( function() {
+            document.location.reload();
+          }, 1000);          
+        }
+      }
+    });
+  });
 });
