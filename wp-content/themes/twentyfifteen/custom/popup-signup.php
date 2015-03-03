@@ -226,6 +226,7 @@ function ajax_login_action() {
 
       if ( is_wp_error( $logged_user ) ) {
         $result['error'] = 'Wrong username or password!&nbsp;<a href="' . site_url() . '/wp-login.php?action=lostpassword&amp;redirect_to='. urlencode(site_url()) . '" target="_blank" style="color: #4F8A10; text-decoration: underline;">Lost your Password?</a>';        
+        //$result['error'] = 'Wrong username or password!';
       } else {
         $result['logged_in'] = true;
         $result['success'] = "Login successful, redirecting...";
@@ -257,18 +258,18 @@ function add_register_form() {
             <i class="icon-ok-sign"></i>
             <label id="success_text"></label>
         </section>
-        <section>
-          <label class="input">
-            <i class="icon-append icon-user"></i>
-            <input type="text" name="firstname" id="firstname" placeholder="First Name" autocomplete="off" />
-          </label>
-        </section>
-        <section>
-          <label class="input">
-            <i class="icon-append icon-user"></i>
-            <input type="text" name="lastname" id="lastname" placeholder="Last Name" autocomplete="off" />
-          </label>
-        </section>
+        <div class="row">
+          <section class="col col-6">
+            <label class="input">
+              <input type="text" name="firstname" id="firstname" placeholder="First Name" autocomplete="off" />
+            </label>
+          </section>
+          <section class="col col-6">
+            <label class="input">
+              <input type="text" name="lastname" id="lastname" placeholder="Last Name" autocomplete="off" />
+            </label>
+          </section>          
+        </div>
         <section>
           <label class="input">
             <i class="icon-append icon-user"></i>
@@ -290,22 +291,22 @@ function add_register_form() {
       </fieldset>
       <fieldset>
         <section>
-          <strong>What best describes your current career situation?</strong>
+          <strong>What best describes you?</strong>
           <div>
             <input type="radio" id="career-situation-1" name="career-situation" value="1" checked="checked"/>
-            <label for="career-situation-1" class="pointer">Student, actively seeking internships</label>
+            <label for="career-situation-1" class="pointer">Student, seeking internships</label>
           </div>
           <div>
             <input type="radio" id="career-situation-2" name="career-situation" value="2" />
-            <label for="career-situation-2" class="pointer">Student, actively seeking first full-time job</label>
+            <label for="career-situation-2" class="pointer">Student, seeking first full-time job</label>
           </div>
           <div>
             <input type="radio" id="career-situation-3" name="career-situation" value="3" />
-            <label for="career-situation-3" class="pointer">Unemployed, actively seeking full-time employment</label>
+            <label for="career-situation-3" class="pointer">Unemployed, seeking full-time employment</label>
           </div>
           <div>
             <input type="radio" id="career-situation-4" name="career-situation" value="4" />
-            <label for="career-situation-4" class="pointer">Employed, actively seeking new full-time opportunities</label>
+            <label for="career-situation-4" class="pointer">Employed, seeking new full-time opportunities</label>
           </div>
           <div>
             <input type="radio" id="career-situation-5" name="career-situation" value="5" />
@@ -317,7 +318,7 @@ function add_register_form() {
         </section>
       </fieldset>
       <div class="form-footer">
-        <input type="button" class="button" name="register_button" id="register_button" value="Register" />
+        <input type="button" class="button orange-button" name="register_button" id="register_button" value="Join the Community" />
       </div>
       <fieldset>
         <section>Already a member? <strong><a class="log_in" href="#log_in">Log In</a></section></strong>
@@ -357,12 +358,15 @@ function add_register_form() {
         </section>
       </fieldset>      
       <div class="form-footer">
-        <input type="button" class="button" name="login_button" id="login_button" value="Login" />
+        <input type="button" class="button orange-button" name="login_button" id="login_button" value="Login" />
       </div>
       <fieldset>
         <section>
           Not a member? <strong><a class="sign_up" href="#sign_up">Become a member!</a></strong>
-        </section>        
+        </section>
+        <!--section>
+          <strong><a href="<?php echo site_url(); ?>/wp-login.php?action=lostpassword&amp;redirect_to=<?php echo urlencode(site_url()); ?>" target="_blank">Lost your Password?</a></strong>
+        </section-->
       </fieldset>
     </form>
   </div>

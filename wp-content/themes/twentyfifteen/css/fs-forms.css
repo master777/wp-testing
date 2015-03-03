@@ -14,18 +14,18 @@
 }
 .fs-form h2 {
 	display: block;
-	padding: 20px 30px;	
+	padding: 15px 30px;	
 	border-bottom: 1px solid rgba(0,0,0,.1);
 	/*background: #009fbc;*/
 	background: #2dc78d;
-	font-size: 25px;
+	font-size: 18px;
 	font-weight: 300;
 	color: #fff;
 	text-align: center;
 }
 .fs-form fieldset {
 	display: block;	
-	padding: 25px 30px 5px;
+	padding: 10px 30px 5px;
 	border: none;
 	background: rgba(255,255,255,.9);
 }
@@ -33,13 +33,13 @@
 	border-top: 1px solid rgba(0,0,0,.1);
 }
 .fs-form section {
-	margin-bottom: 20px;
+	margin-bottom: 10px;
 }
 .fs-form .form-footer {
 	display: block;
-	padding: 15px 30px 25px;
+	padding: 5px 30px 5px;
 	border-top: 1px solid rgba(0,0,0,.1);
-	background: rgba(248,248,248,.9);
+	/*background: rgba(248,248,248,.9);*/
 }
 .fs-form .form-footer:after {
 	content: '';
@@ -1709,6 +1709,21 @@
 .fs-form .checkbox.state-disabled:hover i,
 .fs-form .toggle.state-disabled:hover i {
 	border-color: #e5e5e5;
+}
+
+.fs-form input.button.orange-button {
+  background-color: #fc6700;
+  opacity: 1.0;
+  transition: opacity 0.2s;
+  -o-transition: opacity 0.2s;
+  -ms-transition: opacity 0.2s;
+  -moz-transition: opacity 0.2s;
+  -webkit-transition: opacity 0.2s;
+}
+
+.fs-form input.button.orange-button:hover {
+  background-color: #fc6700;
+  opacity: 1.0;
 }
 
 /**/

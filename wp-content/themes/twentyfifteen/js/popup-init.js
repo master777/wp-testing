@@ -2,7 +2,7 @@ jQuery(document).ready( function() {
 	
   jQuery(".sign_up").colorbox({
     inline: true,
-    width: "500px"
+    width: "430px"
     /*,
     onOpen: function() { 
       var page = jQuery(this).data('page');
@@ -11,7 +11,7 @@ jQuery(document).ready( function() {
   });
   jQuery(".log_in").colorbox({
     inline: true,
-    width: "500px"
+    width: "430px"
     /*,
     onOpen: function() {
       var page = jQuery(this).data('page');
@@ -53,6 +53,8 @@ jQuery(document).ready( function() {
 				jQuery("#register_form #error_text").html(response.error);
 				jQuery("#register_form .form-error").show();
 
+        jQuery.colorbox.resize();
+
 				jQuery('html,body').animate({
 					scrollTop: jQuery("#sign_up").offset().top
 				},'fast');
@@ -62,6 +64,8 @@ jQuery(document).ready( function() {
 				if (response.success) {
 					jQuery("#register_form #success_text").html(response.success);
 					jQuery("#register_form .form-success").show();
+
+          jQuery.colorbox.resize();
 
 					jQuery('html,body').animate({
 						scrollTop: jQuery("#sign_up").offset().top
@@ -109,9 +113,13 @@ jQuery(document).ready( function() {
         jQuery("#login_form #login_error_text").html(response.error);
         jQuery("#login_form .form-error").show();
 
+        jQuery.colorbox.resize();
+
+        /*
         jQuery('html,body').animate({
           scrollTop: jQuery("#log_in").offset().top
         },'fast');
+        */
 
       } else {
 
@@ -119,9 +127,13 @@ jQuery(document).ready( function() {
           jQuery("#login_form #login_success_text").html(response.success);
           jQuery("#login_form .form-success").show();
 
+          jQuery.colorbox.resize();
+
+          /*
           jQuery('html,body').animate({
             scrollTop: jQuery("#sign_up").offset().top
           },'fast');
+          */
         }
 
         if (response.logged_in === true) {
