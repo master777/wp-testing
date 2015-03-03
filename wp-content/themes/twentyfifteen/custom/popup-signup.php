@@ -17,19 +17,28 @@ add_filter('wp_nav_menu_items','add_custom_menu', 10, 2);
 
 // Agregamos un shortcode para crear un boton que muestre el popup
 function add_signup_button($params = array()) {
-  if (!is_user_logged_in()) {
-    $params = shortcode_atts( array(
-      "name" => "Register Now",
-      "login" => false
-    ), $params);
+  $params = shortcode_atts( array(
+    "name" => "Register Now",
+    "login" => false,
+    "page" => ""
+  ), $params);
 
-    if ($params['login']) {
-      return "<div style='text-align: center;'><a class='log_in orange-button' href='#log_in'>" . $params['name'] . "</a></div>";
-    } else {
-      return "<div style='text-align: center;'><a class='sign_up orange-button' href='#sign_up'>" . $params['name'] . "</a></div>";      
-    }
+  $button_action = $params['login'] ? $button_action = "log_in" : $button_action = "sign_up" ;
+
+  if (!is_user_logged_in()) {
+    
+    return "<div style='text-align: center;'><a class='" . $button_action . " orange-button' href='#" . $button_action . "' data-page='" . $params['page'] . "'>" . $params['name'] . "</a></div>";
+
   } else {
-    return "";
+    /*
+    if (!empty($params['page'])) {
+      return "<div style='text-align: center;'><a class='orange-button' href='" . $params['page'] . "' >" . $params['name'] . "</a></div>";
+    } else {
+      return "<div style='text-align: center;'><a class='" . $button_action . " orange-button' href='#" . $button_action . "' data-page='" . $params['page'] . "'>" . $params['name'] . "</a></div>";
+    }
+    */
+
+    return "<div style='text-align: center;'><a class='" . $button_action . " orange-button' href='#" . $button_action . "' data-page='" . $params['page'] . "'>" . $params['name'] . "</a></div>";
   }
 }
 add_shortcode( 'signup_popup', 'add_signup_button' );
@@ -235,6 +244,7 @@ add_action( 'wp_ajax_login_action', 'ajax_login_action' );
 function add_register_form() {
   ?>
 <div style='display:none'>
+  <input type="hidden" id="fs_success_page" name="fs_success_page" value="" />
   <div id='sign_up'>
     <form id="register_form" class="fs-form">
       <h2>Become a FindSpark Member!</h2>

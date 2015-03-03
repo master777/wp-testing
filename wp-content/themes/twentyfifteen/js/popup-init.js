@@ -2,15 +2,26 @@ jQuery(document).ready( function() {
 	
   jQuery(".sign_up").colorbox({
     inline: true,
-    width: "500px" // "50%"
+    width: "500px"
+    /*,
+    onOpen: function() { 
+      var page = jQuery(this).data('page');
+      jQuery("#fs_success_page").val(page);
+    }*/
   });
   jQuery(".log_in").colorbox({
     inline: true,
-    width: "500px" // "50%"
+    width: "500px"
+    /*,
+    onOpen: function() {
+      var page = jQuery(this).data('page');
+      jQuery("#fs_success_page").val(page);
+    }*/
   });
 
 	// Ajax Request - Save Data
 	jQuery('#register_button').click( function( evt ) {
+    //console.log(jQuery("#fs_success_page").val());
 
 		if (jQuery("#register_form input[name='agree']:checked").val() != 1) {
 			alert("You must agree to the Terms and Conditions!");			
@@ -60,6 +71,13 @@ jQuery(document).ready( function() {
 				if (response.registered === true || response.logged_in === true) {
 					setTimeout( function() {
 						document.location.reload();
+            /*
+            if ( jQuery("#fs_success_page").val() ) {
+              document.location.href = jQuery("#fs_success_page").val();
+            } else {
+              document.location.reload();
+            }
+            */
 						//document.location.href = WPURLS.home;
 						//document.location.href = WPURLS.admin_profile;
 					}, 2000);					
@@ -70,6 +88,7 @@ jQuery(document).ready( function() {
   
   // Ajax Request - Login Action
   jQuery('#login_button').click( function( evt ) {
+    //console.log(jQuery("#fs_success_page").val());
 
     var data = {
       action: 'login_action', // es el nombre de la accion "wp_ajax_login_action" sin el "wp_ajax_"
@@ -108,6 +127,13 @@ jQuery(document).ready( function() {
         if (response.logged_in === true) {
           setTimeout( function() {
             document.location.reload();
+            /*
+            if ( jQuery("#fs_success_page").val() ) {
+              document.location.href = jQuery("#fs_success_page").val();
+            } else {
+              document.location.reload();
+            }
+            */
           }, 1000);          
         }
       }
