@@ -30,15 +30,15 @@ function add_signup_button($params = array()) {
     return "<div style='text-align: center;'><a class='" . $button_action . " orange-button' href='#" . $button_action . "' data-page='" . $params['page'] . "'>" . $params['name'] . "</a></div>";
 
   } else {
-    /*
+    
     if (!empty($params['page'])) {
       return "<div style='text-align: center;'><a class='orange-button' href='" . $params['page'] . "' >" . $params['name'] . "</a></div>";
     } else {
       return "<div style='text-align: center;'><a class='" . $button_action . " orange-button' href='#" . $button_action . "' data-page='" . $params['page'] . "'>" . $params['name'] . "</a></div>";
     }
-    */
+    
 
-    return "<div style='text-align: center;'><a class='" . $button_action . " orange-button' href='#" . $button_action . "' data-page='" . $params['page'] . "'>" . $params['name'] . "</a></div>";
+    //return "<div style='text-align: center;'><a class='" . $button_action . " orange-button' href='#" . $button_action . "' data-page='" . $params['page'] . "'>" . $params['name'] . "</a></div>";
   }
 }
 add_shortcode( 'signup_popup', 'add_signup_button' );
@@ -225,8 +225,8 @@ function ajax_login_action() {
       $logged_user = wp_signon( $cred, false );
 
       if ( is_wp_error( $logged_user ) ) {
-        $result['error'] = 'Wrong username or password!&nbsp;<a href="' . site_url() . '/wp-login.php?action=lostpassword&amp;redirect_to='. urlencode(site_url()) . '" target="_blank" style="color: #4F8A10; text-decoration: underline;">Lost your Password?</a>';        
-        //$result['error'] = 'Wrong username or password!';
+        //$result['error'] = 'Wrong username or password!&nbsp;<a href="' . site_url() . '/wp-login.php?action=lostpassword&amp;redirect_to='. urlencode(site_url()) . '" target="_blank" style="color: #4F8A10; text-decoration: underline;">Lost your Password?</a>';        
+        $result['error'] = 'Wrong username or password!';
       } else {
         $result['logged_in'] = true;
         $result['success'] = "Login successful, redirecting...";
@@ -314,7 +314,7 @@ function add_register_form() {
           </div>
         </section>
         <section>
-          <input type="checkbox" id="agree" name="agree" value="1" /> I agree to the <strong><a href="<?php echo site_url(); ?>/terms" target="_blank">FindSpark Terms &amp; Conditions</a></strong>
+          <input type="checkbox" id="agree" name="agree" value="1" /> <label for="agree" class="pointer">I agree to the</label> <strong><a href="<?php echo site_url(); ?>/terms" target="_blank">FindSpark Terms &amp; Conditions</a></strong>
         </section>
       </fieldset>
       <div class="form-footer">
@@ -351,7 +351,7 @@ function add_register_form() {
         </section>
         <section>
           <input type="checkbox" id="remember_me" name="remember_me" value="1" />
-          <label class="pointer" for="remember_me">Remember Me</label>
+          <label class="pointer" for="remember_me">Remember Me</label>&nbsp;|&nbsp;<strong><a href="<?php echo site_url(); ?>/wp-login.php?action=lostpassword&amp;redirect_to=<?php echo urlencode(site_url()); ?>" target="_blank">Forgot password?</a></strong>
         </section>
         <section>
           <?php wp_nonce_field( 'ajax_login_nonce', 'security_code' ); ?>
