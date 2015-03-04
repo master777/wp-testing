@@ -162,6 +162,7 @@ function ajax_save_data() {
         $user_id = wp_insert_user($user);
         if ( !is_wp_error( $user_id ) ) {
           $result['registered'] = true;
+          $result['success'] = "Registration complete!";
 
           // Registramos los campos faltantes
           update_user_meta( $user_id, 'career_situation', $career_situation );
