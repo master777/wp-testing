@@ -46,7 +46,7 @@ images/ui-icons_ffffff_256x240.png
 3) Ingresar como administrador en el sitio y crear una pagina en blanco llamada "My Profile" con un permalink de "/profile".
 Luego elegir el template "User Profile (Public)" y guardar los cambios.
 
-IMPORTANTE: Tomar nota del ID de la pagina creada. (En el staging es 19812)
+IMPORTANTE: Tomar nota del ID de la pagina creada. (En el staging es 19812 y en live es 19957)
 
 4) Editar el archivo "custom/profile_url.pnp" y modificar el page_id (linea 10) con el ID obtenido en el anterior paso.
 En el staging quedaria asi:
