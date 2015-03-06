@@ -24,14 +24,14 @@ jQuery(document).ready( function() {
 
     switch(wpjb_button.html()) {
       case "Login":
-        //wpjb_button.addClass("sign_up");
+        wpjb_button.addClass("sign_up");
         wpjb_button.attr("href", "#sign_up");
         wpjb_button.html("Join");
         wpjb_button.colorbox(colorbox_config);
         break;
       case "Register":
         wpjb_button.removeClass("wpjb-button cboxElement");
-        //wpjb_button.addClass("log_in");
+        wpjb_button.addClass("log_in");
         wpjb_button.attr("href", "#log_in");
         wpjb_button.html("Login");
         wpjb_button.colorbox(colorbox_config);
@@ -50,7 +50,6 @@ jQuery(document).ready( function() {
 
     var security_code = WPURLS.ajax_register_nonce;
 
-    // Creamos el objecto
     var data = {
       action: 'save_data_action', // es el nombre de la accion "wp_ajax_save_data_action" sin el "wp_ajax_"
       username: jQuery("#register_form input[name='username']").val(),
@@ -64,12 +63,11 @@ jQuery(document).ready( function() {
 
     jQuery.post(WPURLS.ajaxurl, data, function(response) {
 
-      // Limpiamos y ocultamos la seccion de errores
       jQuery("#register_form #error_text").html();
       jQuery(".form-error").hide();
 
       if (response.error) {
-        // Mostramos el error
+        
         jQuery("#register_form #error_text").html(response.error);
         jQuery("#register_form .form-error").show();
 
@@ -121,12 +119,11 @@ jQuery(document).ready( function() {
 
     jQuery.post(WPURLS.ajaxurl, data, function(response) {
 
-      // Limpiamos y ocultamos la seccion de errores
       jQuery("#login_form #login_error_text").html();
       jQuery(".form-error").hide();
 
       if (response.error) {
-        // Mostramos el error
+
         jQuery("#login_form #login_error_text").html(response.error);
         jQuery("#login_form .form-error").show();
 
@@ -135,6 +132,7 @@ jQuery(document).ready( function() {
       } else {
 
         if (response.success) {
+
           jQuery("#login_form #login_success_text").html(response.success);
           jQuery("#login_form .form-success").show();
 
@@ -142,6 +140,7 @@ jQuery(document).ready( function() {
         }
 
         if (response.logged_in === true) {
+
           setTimeout( function() {
             
             if ( jQuery("#fs_success_page").val() ) {
@@ -173,5 +172,16 @@ jQuery(document).ready( function() {
       return true;
     }
   });
+
+  // === Tracking with Google Analytics ===
+  if (typeof ga !== 'undefined') {
+    jQuery('.sign_up').on('click', function() {
+      ga('send', 'event', 'Button', 'Click', 'Popup to register');
+    });
+
+    jQuery('.log_in').on('click', function() {
+      ga('send', 'event', 'Button', 'Click', 'Popup to login');
+    });
+  }
 
 });

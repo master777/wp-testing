@@ -365,9 +365,6 @@ function add_register_form() {
         <section>
           Not a member? <strong><a class="sign_up" href="#sign_up">Become a member!</a></strong>
         </section>
-        <!--section>
-          <strong><a href="<?php echo site_url(); ?>/wp-login.php?action=lostpassword&amp;redirect_to=<?php echo urlencode(site_url()); ?>" target="_blank">Lost your Password?</a></strong>
-        </section-->
       </fieldset>
     </form>
   </div>
