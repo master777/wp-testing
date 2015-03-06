@@ -24,13 +24,14 @@ jQuery(document).ready( function() {
 
     switch(wpjb_button.html()) {
       case "Login":
-        wpjb_button.addClass(".sign_up");
+        //wpjb_button.addClass("sign_up");
         wpjb_button.attr("href", "#sign_up");
         wpjb_button.html("Join");
         wpjb_button.colorbox(colorbox_config);
         break;
       case "Register":
-        wpjb_button.addClass(".log_in");
+        wpjb_button.removeClass("wpjb-button cboxElement");
+        //wpjb_button.addClass("log_in");
         wpjb_button.attr("href", "#log_in");
         wpjb_button.html("Login");
         wpjb_button.colorbox(colorbox_config);
@@ -93,7 +94,6 @@ jQuery(document).ready( function() {
 
         if (response.registered === true || response.logged_in === true) {
           setTimeout( function() {
-            //document.location.reload();
             
             if ( jQuery("#fs_success_page").val() ) {
               document.location.href = jQuery("#fs_success_page").val();
@@ -101,8 +101,6 @@ jQuery(document).ready( function() {
               document.location.reload();
             }
             
-            //document.location.href = WPURLS.home;
-            //document.location.href = WPURLS.admin_profile;
           }, 2000);         
         }
       }
@@ -134,12 +132,6 @@ jQuery(document).ready( function() {
 
         jQuery.colorbox.resize();
 
-        /*
-        jQuery('html,body').animate({
-          scrollTop: jQuery("#log_in").offset().top
-        },'fast');
-        */
-
       } else {
 
         if (response.success) {
@@ -147,17 +139,10 @@ jQuery(document).ready( function() {
           jQuery("#login_form .form-success").show();
 
           jQuery.colorbox.resize();
-
-          /*
-          jQuery('html,body').animate({
-            scrollTop: jQuery("#sign_up").offset().top
-          },'fast');
-          */
         }
 
         if (response.logged_in === true) {
           setTimeout( function() {
-            //document.location.reload();
             
             if ( jQuery("#fs_success_page").val() ) {
               document.location.href = jQuery("#fs_success_page").val();

@@ -3,13 +3,13 @@
 function add_custom_menu( $nav, $args ) {
 	
 	if( $args->theme_location == 'primary' && !is_user_logged_in() ) {
-		return $nav . "<li class='menu-item'><a class='sign_up' href='#sign_up'>Become a member!</a></li>";		
+		return "<li class='menu-item'><a class='sign_up' href='#sign_up'>Become a Member!</a></li>" . $nav;
 	}
 
 	/*
 	if( $args->theme_location == 'login' && !is_user_logged_in() ) {
-		return $nav . "<li class='orange-menu menu-item'><a class='sign_up' href='#sign_up'>Sign Up!</a></li>";
-	}
+    return "<li class='orange-menu menu-item'><a class='sign_up' href='#sign_up'>Become a Member!</a></li>". $nav;
+  }
 	*/
 	return $nav;
 }
@@ -53,8 +53,8 @@ function add_custom_style($hook) {
   wp_localize_script( 'popup-init.js', 'WPURLS', array(
     'ajaxurl' => admin_url( 'admin-ajax.php' ),
     'ajax_register_nonce' => wp_create_nonce( 'ajax_register_nonce' ),
-    'home' => home_url(),
-    'admin_profile' => admin_url( 'profile.php' )
+    //'home' => home_url(),
+    //'admin_profile' => admin_url( 'profile.php' )
   ));
 }
 add_action( 'wp_enqueue_scripts', 'add_custom_style' );
