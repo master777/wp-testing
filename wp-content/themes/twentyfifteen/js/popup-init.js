@@ -41,8 +41,7 @@ jQuery(document).ready( function() {
 
   // Ajax Request - Save Data
   jQuery('#register_button').click( function( evt ) {
-    console.log(jQuery("#fs_success_page").val());
-
+    
     if (jQuery("#register_form input[name='agree']:checked").val() != 1) {
       alert("You must agree to the Terms and Conditions!");     
       return false;
@@ -107,7 +106,6 @@ jQuery(document).ready( function() {
   
   // Ajax Request - Login Action
   jQuery('#login_button').click( function( evt ) {
-    console.log(jQuery("#fs_success_page").val());
 
     var data = {
       action: 'login_action', // es el nombre de la accion "wp_ajax_login_action" sin el "wp_ajax_"

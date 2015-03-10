@@ -23,7 +23,7 @@ function add_signup_button($params = array()) {
     "page" => ""
   ), $params);
 
-  $button_action = $params['login'] ? $button_action = "log_in" : $button_action = "sign_up" ;
+  $button_action = $params['login'] && $params['login'] != "false" ? $button_action = "log_in" : $button_action = "sign_up" ;
 
   if (!is_user_logged_in()) {
     
@@ -36,9 +36,7 @@ function add_signup_button($params = array()) {
     } else {
       return "<div style='text-align: center;'><a class='" . $button_action . " orange-button' href='#" . $button_action . "' data-page='" . $params['page'] . "'>" . $params['name'] . "</a></div>";
     }
-    
 
-    //return "<div style='text-align: center;'><a class='" . $button_action . " orange-button' href='#" . $button_action . "' data-page='" . $params['page'] . "'>" . $params['name'] . "</a></div>";
   }
 }
 add_shortcode( 'signup_popup', 'add_signup_button' );
@@ -52,9 +50,7 @@ function add_custom_style($hook) {
 
   wp_localize_script( 'popup-init.js', 'WPURLS', array(
     'ajaxurl' => admin_url( 'admin-ajax.php' ),
-    'ajax_register_nonce' => wp_create_nonce( 'ajax_register_nonce' ),
-    //'home' => home_url(),
-    //'admin_profile' => admin_url( 'profile.php' )
+    'ajax_register_nonce' => wp_create_nonce( 'ajax_register_nonce' )    
   ));
 }
 add_action( 'wp_enqueue_scripts', 'add_custom_style' );
@@ -132,11 +128,11 @@ function ajax_save_data() {
       if (empty($firstname)) {
         $result['error'] = "The first name is required!";
       } else if (!preg_match("/^[a-zA-Z ]*$/", $firstname)) {
-        $result['error'] = "Please only letters to first name!";
+        $result['error'] = "Please only enter letters in your first name!";
       } else if (empty($lastname)) {
         $result['error'] = "The last name is required!";
       } else if (!preg_match("/^[a-zA-Z ]*$/", $lastname)) {
-        $result['error'] = "Please only letters to last name!";   
+        $result['error'] = "Please only enter letters in your last name!";
       } else if (empty($username)) {
         $result['error'] = "The username is required!";
       } else if (empty($email)) {
@@ -146,7 +142,7 @@ function ajax_save_data() {
       } else if (empty($password)) {
         $result['error'] = "The password is required!";
       } else if (strlen($password) < 6) {
-        $result['error'] = "The password must be at least 6 characters!";   
+        $result['error'] = "The password must be at least 6 characters!";
       } else {
         // Intentamos registrar al usuario
         $user = array(
@@ -168,7 +164,6 @@ function ajax_save_data() {
           update_user_meta( $user_id, 'career_situation', $career_situation );
 
           // Notificamos por correo al usuario y al admin
-          //wp_new_user_notification( $user_id, $password );
           send_welcome_email( $user_id, $password );
 
           // Logueamos al usuario en el sitio
@@ -226,7 +221,6 @@ function ajax_login_action() {
       $logged_user = wp_signon( $cred, false );
 
       if ( is_wp_error( $logged_user ) ) {
-        //$result['error'] = 'Wrong username or password!&nbsp;<a href="' . site_url() . '/wp-login.php?action=lostpassword&amp;redirect_to='. urlencode(site_url()) . '" target="_blank" style="color: #4F8A10; text-decoration: underline;">Lost your Password?</a>';        
         $result['error'] = 'Wrong username or password!';
       } else {
         $result['logged_in'] = true;
