@@ -12,30 +12,79 @@ function redirec_to_home() {
   exit();
 }
 
+// Verifica si el usuario actual tiene permitido el acceso a un perfil publico especifico.
+function has_allowed_access($user) {
+  // Obtenemos la configuracion de privacidad para el perfil publico del usuario especificado
+  $public_profile_status = esc_attr( get_the_author_meta( 'public_profile_status', $user->ID ) );
+
+  if ($public_profile_status > 0) {
+
+    if (!is_user_logged_in()) {
+      // Todas las opciones de privacidad (excepto la primera) restringen el acceso al perfil publico para usuarios registrados en el sitio
+      return false;
+    }
+
+    $current_user = wp_get_current_user();
+
+    if ($user->ID == $current_user->ID) {
+      // Todo usuario tiene que tener acceso a su propio perfil publico
+      return true;
+    }
+
+    global $findspark_members, $findspark_employers, $findspark_admins;
+
+    // Cada key corresponde a los valores de las 3 ultimas opciones de privacidad del usuario en el perfil del wp-admin ( Sector: "Privacity Settings" -> Campo: "Public Profile" )
+    $base_roles = array(
+      '1' => array_merge($findspark_members, $findspark_admins),
+      '2' => array_merge($findspark_employers, $findspark_admins),
+      '3' => array_merge($findspark_members, $findspark_employers, $findspark_admins)
+    );
+
+    foreach ($current_user->roles as $role) {
+      if (in_array($role, $base_roles[$public_profile_status])) {
+        return true;
+      }
+    }
+  } else {
+    // La primera opcion no restringe nada (todo el mundo puede ver el perfil)
+    return true;
+  }
+
+  return false;
+}
+
 if (!empty($wp_query->query_vars['user'])) {
   $user_nicename = $wp_query->query_vars['user'];
   $user_profile = get_user_by("slug", $user_nicename);
-  
+
   if (!empty($user_profile)) {
     $is_premium_member = false;
     $is_job_seeker = false;
+
+    $findspark_members = array( 'subscriber', 'premiummember' );
+    $findspark_employers = array( 'employer' );
+    $findspark_admins = array( 'administrator' );
+
     foreach ($user_profile->roles as $role) {
-      if ( in_array( $role, array( 'subscriber', 'premiummember' ) ) ) {
+      if ( in_array( $role, $findspark_members ) ) {
         $is_job_seeker = true;
         //$is_premium_member = $role == 'premiummember';
         $is_premium_member = true; // habilitado siempre solo para testeo
       }
     }
 
-    if ($is_job_seeker) {
+    if ($is_job_seeker && has_allowed_access($user_profile) ) {
       function set_title($title, $sep) {
         global $user_profile;
-        $title = $user_profile->first_name . " " . $user_profile->last_name . " - Findspark";
-              
+        //$title = $user_profile->first_name . " " . $user_profile->last_name . " - Findspark";
+        echo $user_profile->first_name . " " . $user_profile->last_name . " ";
+        
         return $title;
       }
       add_filter( 'wp_title', 'set_title', 10, 2 );
       
+      $public_profile_status = esc_attr( get_the_author_meta( 'public_profile_status', $user_profile->ID ) );
+      $contact_me_status = esc_attr( get_the_author_meta( 'contact_me_status', $user_profile->ID ) );
 
       $email = esc_attr( get_the_author_meta( 'email', $user_profile->ID ) );
       $website = esc_attr( get_the_author_meta( 'url', $user_profile->ID ) );
@@ -61,6 +110,11 @@ if (!empty($wp_query->query_vars['user'])) {
       echo "yahoo: $yahoo <br/>";
       echo "google_plus: $google_plus <br/>";
       */
+
+      $profile_description = esc_attr( get_the_author_meta( 'description', $user_profile->ID ) );
+      $year_graduation = esc_attr( get_the_author_meta( 'year_graduation', $user_profile->ID ) );
+      $job_title = esc_attr( get_the_author_meta( 'job_title', $user_profile->ID ) );
+      $job_company = esc_attr( get_the_author_meta( 'job_company', $user_profile->ID ) );
 
       $pic_data = get_user_meta( $user_profile->ID, 'profile_pic', true );
       if (!empty($pic_data) && !isset($pic_data['error'])) {
@@ -139,8 +193,7 @@ if (!empty($wp_query->query_vars['user'])) {
             <img title="profile image" width="200" height="200" class="img-circle" src="<?php echo $profile_pic_url; ?>">
           </div>
           <div class="col span_4_of_6">
-            <!--h1 class="profile-name"><?php echo $user_profile->first_name . " " . $user_profile->last_name; ?>&nbsp;<span class="tooltip-top" data-tooltip="Premium Member"><img src="<?php echo get_template_directory_uri(); ?>/images/medal_bronze.png" width="32" height="32" /></span></h1-->            
-            <h1 class="profile-name"><?php echo $user_profile->first_name . " " . $user_profile->last_name; ?>&nbsp;<?php if ($is_premium_member) { ?><span class="tooltip-top" data-tooltip="Premium Member"><i class="fa fa-check-circle" style="color: #009fbc;"></i></span><?php } ?></h1>            
+            <h1 class="profile-name"><?php echo $user_profile->first_name . " " . $user_profile->last_name; ?>&nbsp;<?php if ($is_premium_member) { ?><span class="tooltip-top" data-tooltip="Premium Member"><i class="fa fa-check-circle" style="color: #009fbc;"></i></span><?php } ?></h1>
             <a href="<?php echo $website; ?>" target="_blank" class="button large green"><i class="fa fa-globe"></i>&nbsp;My website</a>
             <a href="mailto:<?php echo $email; ?>" class="button large orange"><i class="fa fa-envelope"></i>&nbsp;Contact me</a>
             <br/>
@@ -149,27 +202,36 @@ if (!empty($wp_query->query_vars['user'])) {
       </article>
       <article>
         <div>
+          <?php if (!empty($twitter) || !empty($linkedin)) { ?>
           <div>
             <div class="profile-title">
               Social Media
             </div>            
             <div class="profile-description">
+              <?php if ($twitter) { ?>
               <a href="<?php echo $twitter; ?>" target="_blank">
                 <i class="fa fa-twitter social-circle"></i>
               </a>
+              <?php } ?>
+              <?php if ($linkedin) { ?>
               <a href="<?php echo $linkedin; ?>" target="_blank">
                 <i class="fa fa-linkedin social-circle"></i>
               </a>
+              <?php } ?>
             </div>
           </div>
+          <?php } ?>
+          <?php if (!empty($profile_description)) { ?>
           <div>
             <div class="profile-title">
               About me
             </div>            
             <div class="profile-description">
-              <?php echo esc_attr( get_the_author_meta( 'description', $user_profile->ID ) ); ?>
+              <?php echo $profile_description; ?>
             </div>
           </div>
+          <?php } ?>
+          <?php if (!empty($college_attended)) { ?>
           <div>
             <div class="profile-title">
               College Attended
@@ -180,30 +242,38 @@ if (!empty($wp_query->query_vars['user'])) {
               } ?>
             </div>
           </div>
+          <?php } ?>          
+          <?php if (!empty($year_graduation)) { ?>          
           <div>
             <div class="profile-title">
               Year of Graduation
             </div>            
             <div class="profile-description">
-              <?php echo esc_attr( get_the_author_meta( 'year_graduation', $user_profile->ID ) ); ?>
+              <?php echo $year_graduation; ?>
             </div>
           </div>
+          <?php } ?>
+          <?php if (!empty($job_title)) { ?>
           <div>
             <div class="profile-title">
               Current Job
             </div>            
             <div class="profile-description">
-              <?php echo esc_attr( get_the_author_meta( 'job_title', $user_profile->ID ) ); ?>
+              <?php echo $job_title; ?>
             </div>
           </div>
+          <?php } ?>
+          <?php if (!empty($job_company)) { ?>
           <div>
             <div class="profile-title">
               Current Company
             </div>            
             <div class="profile-description">
-              <?php echo esc_attr( get_the_author_meta( 'job_company', $user_profile->ID ) ); ?>
+              <?php echo $job_company; ?>
             </div>
           </div>
+          <?php } ?>
+          <?php if (!empty($skills)) { ?>
           <div>
             <div class="profile-title">
               Main Skills
@@ -214,6 +284,8 @@ if (!empty($wp_query->query_vars['user'])) {
               } ?>
             </div>
           </div>
+          <?php } ?>
+          <?php if (!empty($target_industries)) { ?>
           <div>
             <div class="profile-title">
               Targed Industries
@@ -224,6 +296,7 @@ if (!empty($wp_query->query_vars['user'])) {
               } ?>
             </div>
           </div>
+          <?php } ?>
           <?php if (!empty($resume['url'])) { ?>
           <div>
             <div class="profile-title">
@@ -242,7 +315,7 @@ if (!empty($wp_query->query_vars['user'])) {
 
 <?php
       get_footer();
-    } else { // el usuario no es un job seeker
+    } else { // el usuario no es un job seeker o no tiene permitido el acceso para ver el perfil
       redirec_to_home();
     }
   } else { // el usuario no existe
