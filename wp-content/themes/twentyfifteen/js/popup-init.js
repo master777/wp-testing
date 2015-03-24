@@ -1,8 +1,8 @@
 jQuery(document).ready( function() {
-
+  var popup_width = "430px";
   var colorbox_config = {
     inline: true,
-    width: "430px",
+    width: popup_width,
     onOpen: function() { 
       var page = jQuery(this).data('page');
       jQuery("#fs_success_page").val(page);
@@ -39,6 +39,27 @@ jQuery(document).ready( function() {
     }
   });
 
+  // Para abrir automaticamente el popup si el hashtag esta en la url
+  var hash = window.location.hash;
+  setTimeout( function() {
+    switch(hash) {
+      case "#sign_up":
+        jQuery.colorbox({
+          inline: true, 
+          width: popup_width,
+          href: "#sign_up"
+        });
+        break;
+      case "#log_in":
+        jQuery.colorbox({
+          inline: true, 
+          width: popup_width,
+          href: "#log_in"
+        });
+        break;
+    }
+  }, 500);
+
   // Ajax Request - Save Data
   jQuery('#register_button').click( function( evt ) {
     
@@ -57,6 +78,7 @@ jQuery(document).ready( function() {
       firstname: jQuery("#register_form input[name='firstname']").val(),
       lastname: jQuery("#register_form input[name='lastname']").val(),
       career_situation: jQuery("#register_form input[name='career-situation']:checked").val(),
+      //career_greatness: jQuery("#register_form input[name='career-greatness']:checked").val(),
       nonce: security_code
     }
 
@@ -95,6 +117,7 @@ jQuery(document).ready( function() {
             if ( jQuery("#fs_success_page").val() ) {
               document.location.href = jQuery("#fs_success_page").val();
             } else {
+              window.location.hash = "";
               document.location.reload();
             }
             
@@ -144,6 +167,7 @@ jQuery(document).ready( function() {
             if ( jQuery("#fs_success_page").val() ) {
               document.location.href = jQuery("#fs_success_page").val();
             } else {
+              window.location.hash = "";
               document.location.reload();
             }
             

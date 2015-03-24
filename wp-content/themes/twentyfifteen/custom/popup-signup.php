@@ -106,6 +106,14 @@ function send_welcome_email( $user_id ) {
 function ajax_save_data() {
   $result = array();
 
+  // Mailchimp account to test
+  $apikey = '473b279b7df5de614de37d3a832274df-us10';
+  $listID = 'f7a9903d4b';
+
+  // Findspark Mailchimp - Register Form Popup (API key)
+  //$apikey = '8c269ac18731a63cfaf418c47f7a957e-us2';
+  //$listID = '8d8300cb5d';
+
   // Verificamos si existe un usuario logueado en el sistema
   if ( is_user_logged_in() ) {
     $result['registered'] = false;
@@ -162,6 +170,22 @@ function ajax_save_data() {
 
           // Registramos los campos faltantes
           update_user_meta( $user_id, 'career_situation', $career_situation );
+
+          //===========
+          // Registramos en mailchimp
+          require 'MailChimp.php';
+          $mailChimp = new \Drewm\MailChimp($apikey);
+          $mc_result = $mailChimp->call('lists/subscribe', array(
+              'id'                => $listID,
+              'email'             => array('email'=> $user['user_email']),
+              'merge_vars'        => array('FNAME'=> $user['first_name'], 'LNAME'=> $user['last_name']),
+              'double_optin'      => false,
+              'update_existing'   => true,
+              'replace_interests' => false,
+              'send_welcome'      => false,
+          ));
+          $result['mailchimp'] = $mc_result;
+          //===========
 
           // Notificamos por correo al usuario y al admin
           send_welcome_email( $user_id, $password );
