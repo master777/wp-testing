@@ -1,5 +1,5 @@
 jQuery(document).ready( function() {
-  var popup_width = "430px";
+  var popup_width = "530px";
   var colorbox_config = {
     inline: true,
     width: popup_width,
@@ -77,8 +77,10 @@ jQuery(document).ready( function() {
       email: jQuery("#register_form input[name='email']").val(),
       firstname: jQuery("#register_form input[name='firstname']").val(),
       lastname: jQuery("#register_form input[name='lastname']").val(),
-      career_situation: jQuery("#register_form input[name='career-situation']:checked").val(),
-      //career_greatness: jQuery("#register_form input[name='career-greatness']:checked").val(),
+      career_situation: jQuery("#register_form #career-situation").val(),
+      career_advice: jQuery("#register_form input[name='career-advice']:checked").val(),
+      //career_situation: jQuery("#register_form input[name='career-situation']:checked").val(),
+      //career_advice: jQuery("#register_form #career-advice").val(),
       nonce: security_code
     }
 

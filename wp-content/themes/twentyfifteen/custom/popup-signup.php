@@ -107,12 +107,35 @@ function ajax_save_data() {
   $result = array();
 
   // Mailchimp account to test
-  $apikey = '473b279b7df5de614de37d3a832274df-us10';
-  $listID = 'f7a9903d4b';
+  //$apikey = '473b279b7df5de614de37d3a832274df-us10';
+  //$listID = 'f7a9903d4b';
 
   // Findspark Mailchimp - Register Form Popup (API key)
-  //$apikey = '8c269ac18731a63cfaf418c47f7a957e-us2';
-  //$listID = '8d8300cb5d';
+  $apikey = '8c269ac18731a63cfaf418c47f7a957e-us2';
+  $listID = '8d8300cb5d';
+
+  // Tabla con los valores correspondientes de los "Grupos" de mailchimp
+  $mc_conversion_table = array(
+    "career_situation" => array(
+      "id" => 10505,
+      "name" => "Career Status",      
+      "values" => array(
+        1 => "Full-time student, seeking internships",
+        2 => "Full-time student, seeking first full-time job",
+        3 => "Unemployed, seeking full-time employment",
+        4 => "Employed, seeking new full-time opportunities",
+        5 => "Employed, open to new opportunities"
+      )
+    ),
+    "career_advice" => array(
+      "id" => 10465,
+      "name" => "How much career advice do you want?",
+      "values" => array(
+        1 => "Just send me your awesome Weekly Opportunities Newsletter",
+        2 => "Give me all the great career advice as you have it!"
+      )
+    )
+  );
 
   // Verificamos si existe un usuario logueado en el sistema
   if ( is_user_logged_in() ) {
@@ -131,6 +154,7 @@ function ajax_save_data() {
 
       // Custom Fields
       $career_situation = sanitize_text_field($_POST['career_situation']);
+      $career_advice = sanitize_text_field($_POST['career_advice']);
 
       // Validamos los campos
       if (empty($firstname)) {
@@ -151,6 +175,10 @@ function ajax_save_data() {
         $result['error'] = "The password is required!";
       } else if (strlen($password) < 6) {
         $result['error'] = "The password must be at least 6 characters!";
+      } else if (empty($career_situation)) {
+        $result['error'] = "Please select an option in your career situation!";
+      } else if (empty($career_advice)) {
+        $result['error'] = "Please select an option in your career advice!";
       } else {
         // Intentamos registrar al usuario
         $user = array(
@@ -170,21 +198,46 @@ function ajax_save_data() {
 
           // Registramos los campos faltantes
           update_user_meta( $user_id, 'career_situation', $career_situation );
+          update_user_meta( $user_id, 'career_advice', $career_advice );
 
           //===========
-          // Registramos en mailchimp
-          require 'MailChimp.php';
-          $mailChimp = new \Drewm\MailChimp($apikey);
-          $mc_result = $mailChimp->call('lists/subscribe', array(
+          if (!empty($apikey) && !empty($listID)) {
+            require 'MailChimp.php';
+
+            // Registramos en mailchimp
+            $mailChimp = new \Drewm\MailChimp($apikey);
+            $mc_args = array(
               'id'                => $listID,
               'email'             => array('email'=> $user['user_email']),
-              'merge_vars'        => array('FNAME'=> $user['first_name'], 'LNAME'=> $user['last_name']),
+              'merge_vars'        => array(
+                'FNAME'=> $user['first_name'], 
+                'LNAME'=> $user['last_name'],
+                'GROUPINGS' => array(
+                  array(
+                    'id' => $mc_conversion_table['career_situation']['id'],
+                    //'name' => $mc_conversion_table['career_situation']['name'], // Si se especifica el "id" ya no se necesita el "name"
+                    'groups' => array(
+                      $mc_conversion_table['career_situation']['values'][$career_situation]
+                    )
+                  ),
+                  array(
+                    'id' => $mc_conversion_table['career_advice']['id'],
+                    //'name' => $mc_conversion_table['career_advice']['name'], // Si se especifica el "id" ya no se necesita el "name"
+                    'groups' => array(
+                      $mc_conversion_table['career_advice']['values'][$career_advice]
+                    )
+                  ),
+                )
+              ),
               'double_optin'      => false,
               'update_existing'   => true,
               'replace_interests' => false,
               'send_welcome'      => false,
-          ));
-          $result['mailchimp'] = $mc_result;
+            );
+            $mc_result = $mailChimp->call('lists/subscribe', $mc_args);          
+            //$result['mailchimp_args'] = $mc_args;
+            $result['mailchimp'] = $mc_result;            
+          }
           //===========
 
           // Notificamos por correo al usuario y al admin
@@ -311,25 +364,53 @@ function add_register_form() {
       <fieldset>
         <section>
           <strong>What best describes you?</strong>
-          <div>
-            <input type="radio" id="career-situation-1" name="career-situation" value="1" checked="checked"/>
-            <label for="career-situation-1" class="pointer">Student, seeking internships</label>
-          </div>
-          <div>
-            <input type="radio" id="career-situation-2" name="career-situation" value="2" />
-            <label for="career-situation-2" class="pointer">Student, seeking first full-time job</label>
-          </div>
-          <div>
-            <input type="radio" id="career-situation-3" name="career-situation" value="3" />
-            <label for="career-situation-3" class="pointer">Unemployed, seeking full-time employment</label>
-          </div>
-          <div>
-            <input type="radio" id="career-situation-4" name="career-situation" value="4" />
-            <label for="career-situation-4" class="pointer">Employed, seeking new full-time opportunities</label>
-          </div>
-          <div>
-            <input type="radio" id="career-situation-5" name="career-situation" value="5" />
-            <label for="career-situation-5" class="pointer">Employed, open to new opportunities</label>
+          <select id="career-situation" name="career-situation" style="font-size: 12px; width: 100%;">
+            <option value="" disabled selected></option>
+            <option value="1">Student, seeking internships</option>
+            <option value="2">Student, seeking first full-time job</option>
+            <option value="3">Unemployed, seeking full-time employment</option>
+            <option value="4">Employed, seeking new full-time opportunities</option>
+            <option value="5">Employed, open to new opportunities</option>
+          </select>
+          <!--div style="font-size: 11px;">          
+            <div>
+              <input type="radio" id="career-situation-1" name="career-situation" value="1" checked="checked"/>
+              <label for="career-situation-1" class="pointer">Student, seeking internships</label>
+            </div>
+            <div>
+              <input type="radio" id="career-situation-2" name="career-situation" value="2" />
+              <label for="career-situation-2" class="pointer">Student, seeking first full-time job</label>
+            </div>
+            <div>
+              <input type="radio" id="career-situation-3" name="career-situation" value="3" />
+              <label for="career-situation-3" class="pointer">Unemployed, seeking full-time employment</label>
+            </div>
+            <div>
+              <input type="radio" id="career-situation-4" name="career-situation" value="4" />
+              <label for="career-situation-4" class="pointer">Employed, seeking new full-time opportunities</label>
+            </div>
+            <div>
+              <input type="radio" id="career-situation-5" name="career-situation" value="5" />
+              <label for="career-situation-5" class="pointer">Employed, open to new opportunities</label>
+            </div>
+          </div-->
+        </section>
+        <section>
+          <strong>How much career greatness would you like?</strong>
+          <!--select id="career-advice" name="career-advice" style="font-size: 12px; width: 100%;">
+            <option value="" disabled selected></option>
+            <option value="1">I heard your Weekly Opportunities Newsletter rocks, let's just do that</option>
+            <option value="2">Gimme everything you've got, like those quick actionable tips I've heard about</option>
+          </select-->
+          <div style="font-size: 11px;">
+            <div>
+              <input type="radio" id="career-advice-1" name="career-advice" value="1" checked="checked">
+              <label for="career-advice-1" class="pointer">I heard your Weekly Opportunities Newsletter rocks, let's just do that</label>
+            </div>
+            <div>
+              <input type="radio" id="career-advice-2" name="career-advice" value="2">
+              <label for="career-advice-2" class="pointer">Gimme everything you've got, like those quick actionable tips I've heard about</label>
+            </div>
           </div>
         </section>
         <section>
