@@ -114,6 +114,12 @@ jQuery(document).ready( function() {
         }
 
         if (response.registered === true || response.logged_in === true) {
+          // === Tracking with Google Analytics ===
+          if (typeof ga !== 'undefined') {
+            ga('send', 'event', 'Account Creation', 'Job Seeker', 'Job seekers registered through popup');
+          }
+          // ===
+
           setTimeout( function() {
             
             if ( jQuery("#fs_success_page").val() ) {
