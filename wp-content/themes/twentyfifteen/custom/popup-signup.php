@@ -3,7 +3,7 @@
 function add_custom_menu( $nav, $args ) {
 	
 	if( $args->theme_location == 'primary' && !is_user_logged_in() ) {
-		return "<li class='menu-item'><a class='sign_up' href='#sign_up'>Become a Member!</a></li>" . $nav;
+		return "<li class='menu-item'><a class='sign_up' href='#sign_up' data-description='<<Become a Member>> Button'>Become a Member!</a></li>" . $nav;
 	}
 
 	/*
@@ -20,21 +20,31 @@ function add_signup_button($params = array()) {
   $params = shortcode_atts( array(
     "name" => "Register Now",
     "login" => false,
-    "page" => ""
+    "page" => "",
+    "img" => "",
+    "description" => "",
   ), $params);
 
-  $button_action = $params['login'] && $params['login'] != "false" ? $button_action = "log_in" : $button_action = "sign_up" ;
+  $button_action = $params['login'] && $params['login'] != "false" ? $button_action = "log_in" : $button_action = "sign_up";
+
+  if ($params['img']) {
+    $button_content =  "<img src='" . $params['img'] . "' alt='" . $button_action . "' style='margin: 0 auto;'>";
+    $orange_button = "";
+  } else {
+    $button_content = $params['name'];
+    $orange_button = "orange-button";
+  }
 
   if (!is_user_logged_in()) {
     
-    return "<div style='text-align: center;'><a class='" . $button_action . " orange-button' href='#" . $button_action . "' data-page='" . $params['page'] . "'>" . $params['name'] . "</a></div>";
+    return "<div style='text-align: center;'><a class='" . $button_action . " {$orange_button}' href='#" . $button_action . "' data-page='" . $params['page'] . "' data-description='" . $params['description'] . "'>" . $button_content . "</a></div>";
 
   } else {
     
     if (!empty($params['page'])) {
-      return "<div style='text-align: center;'><a class='orange-button' href='" . $params['page'] . "' >" . $params['name'] . "</a></div>";
+      return "<div style='text-align: center;'><a class='{$orange_button}' href='" . $params['page'] . "'  data-description='" . $params['description'] . "'>" . $button_content . "</a></div>";
     } else {
-      return "<div style='text-align: center;'><a class='" . $button_action . " orange-button' href='#" . $button_action . "' data-page='" . $params['page'] . "'>" . $params['name'] . "</a></div>";
+      return "<div style='text-align: center;'><a class='" . $button_action . " {$orange_button}' href='#" . $button_action . "' data-page='" . $params['page'] . "' data-description='" . $params['description'] . "'>" . $button_content . "</a></div>";
     }
 
   }
@@ -318,6 +328,7 @@ function add_register_form() {
   ?>
 <div style='display:none'>
   <input type="hidden" id="fs_success_page" name="fs_success_page" value="" />
+  <input type="hidden" id="fs_description" name="fs_description" value="" />
   <div id='sign_up'>
     <form id="register_form" class="fs-form">
       <h2>Become a FindSpark Member!</h2>
@@ -371,37 +382,10 @@ function add_register_form() {
             <option value="3">Unemployed, seeking full-time employment</option>
             <option value="4">Employed, seeking new full-time opportunities</option>
             <option value="5">Employed, open to new opportunities</option>
-          </select>
-          <!--div style="font-size: 11px;">          
-            <div>
-              <input type="radio" id="career-situation-1" name="career-situation" value="1" checked="checked"/>
-              <label for="career-situation-1" class="pointer">Student, seeking internships</label>
-            </div>
-            <div>
-              <input type="radio" id="career-situation-2" name="career-situation" value="2" />
-              <label for="career-situation-2" class="pointer">Student, seeking first full-time job</label>
-            </div>
-            <div>
-              <input type="radio" id="career-situation-3" name="career-situation" value="3" />
-              <label for="career-situation-3" class="pointer">Unemployed, seeking full-time employment</label>
-            </div>
-            <div>
-              <input type="radio" id="career-situation-4" name="career-situation" value="4" />
-              <label for="career-situation-4" class="pointer">Employed, seeking new full-time opportunities</label>
-            </div>
-            <div>
-              <input type="radio" id="career-situation-5" name="career-situation" value="5" />
-              <label for="career-situation-5" class="pointer">Employed, open to new opportunities</label>
-            </div>
-          </div-->
+          </select>          
         </section>
         <section>
-          <strong>How much career greatness would you like?</strong>
-          <!--select id="career-advice" name="career-advice" style="font-size: 12px; width: 100%;">
-            <option value="" disabled selected></option>
-            <option value="1">I heard your Weekly Opportunities Newsletter rocks, let's just do that</option>
-            <option value="2">Gimme everything you've got, like those quick actionable tips I've heard about</option>
-          </select-->
+          <strong>How much career greatness would you like?</strong>          
           <div style="font-size: 11px;">
             <div>
               <input type="radio" id="career-advice-1" name="career-advice" value="1" checked="checked">

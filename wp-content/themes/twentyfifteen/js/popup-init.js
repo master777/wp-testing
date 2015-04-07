@@ -5,7 +5,9 @@ jQuery(document).ready( function() {
     width: popup_width,
     onOpen: function() { 
       var page = jQuery(this).data('page');
+      var description = jQuery(this).data('description');
       jQuery("#fs_success_page").val(page);
+      jQuery("#fs_description").val(description);
     }
   };
 
@@ -116,7 +118,9 @@ jQuery(document).ready( function() {
         if (response.registered === true || response.logged_in === true) {
           // === Tracking with Google Analytics ===
           if (typeof ga !== 'undefined') {
-            ga('send', 'event', 'Account Creation', 'Job Seeker', 'Job seekers registered through popup');
+            var current_page = window.location.href;
+            var description = jQuery("#fs_description").val();
+            ga('send', 'event', 'Job Seeker Registration', current_page, description);
           }
           // ===
 
@@ -169,6 +173,13 @@ jQuery(document).ready( function() {
         }
 
         if (response.logged_in === true) {
+          // === Tracking with Google Analytics ===
+          if (typeof ga !== 'undefined') {
+            var current_page = window.location.href;
+            var description = jQuery("#fs_description").val();
+            ga('send', 'event', 'User Login', current_page, description);
+          }
+          // ===
 
           setTimeout( function() {
             
