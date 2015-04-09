@@ -132,8 +132,8 @@
     <div id="PageTop">    
       <?php if (get_header_image()) : ?>
       <div class="logo">
-        <a href="<?php echo home_url(); ?>" title="<?php bloginfo('name'); ?>" ><img src="<?php header_image(); ?>" height="<?php echo get_custom_header()->height; ?>" width="<?php echo get_custom_header()->width; ?>" alt="<?php bloginfo('name'); ?> Logo" title="<?php bloginfo('name'); ?>" id="logo-img"/></a>
-        <!--a href="<?php echo home_url(); ?>" title="<?php bloginfo('name'); ?>" ><img src="<?php echo get_template_directory_uri(); ?>/images/findspark-logo-black.png" height="71" width="280" alt="<?php bloginfo('name'); ?> Logo" title="<?php bloginfo('name'); ?>" id="logo-img"/></a-->
+        <!--a href="<?php echo home_url(); ?>" title="<?php bloginfo('name'); ?>" ><img src="<?php header_image(); ?>" height="<?php echo get_custom_header()->height; ?>" width="<?php echo get_custom_header()->width; ?>" alt="<?php bloginfo('name'); ?> Logo" title="<?php bloginfo('name'); ?>" id="logo-img"/></a-->
+        <a href="<?php echo home_url(); ?>" title="<?php bloginfo('name'); ?>" ><img src="<?php echo get_template_directory_uri(); ?>/images/findspark-header.png" alt="<?php bloginfo('name'); ?> Logo" title="<?php bloginfo('name'); ?>" id="logo-img" style="max-width: 220px; height: auto;"/></a>
       <?php endif; ?>
       </div>
     

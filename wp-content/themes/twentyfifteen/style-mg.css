@@ -1,0 +1,171 @@
+#page{
+    width: auto!important;
+    max-width: 1000px;
+    /*    overflow: hidden;*/
+}
+.home_content.one-column {
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    padding: 3%;
+    width: 100%;
+}
+
+img.alignleft{
+    margin-bottom: 0px;    
+}
+.alignleft {
+    float: none!important;
+}
+
+
+#social_bar li {
+    margin-bottom: 5px;
+}
+
+.pinterest-mgs{
+text-align: left;
+}
+
+#sidebar_wrapper{
+/*    display: none;   */
+}
+.alignleft.size-full.wp-image-14716 {
+    float: none !important;
+}
+@media (max-width : 320px){
+    #query {
+        font-size: 12px;
+    }
+
+    #wpjb-job-list {
+        font-size: 12px;
+    }
+
+    #menu-login li {        
+        width: 100%;
+        text-align: center;
+        margin-right: 0px;        
+    }
+
+    #wpjb-main {
+        font-size: 12px;
+    }
+    #dcssb-float{
+/*    top: 22px!important;*/
+    }
+}
+
+@media (max-width : 480px){
+    #menu-login li {
+        font-size: 13px;
+    }
+    #menu-login li{
+        display: block;
+        margin-bottom: 2%;
+        float: right;
+    }
+    .wpjb-form div input[type=text], 
+    .wpjb-form div input[type=password], 
+    .wpjb-form div select{
+        width: 100%!important;
+    }
+    #content .gallery-columns-4 .gallery-item{
+        /*        width: 48%;*/
+        width: 100%;
+    }
+
+    #content .gallery-columns-4 .gallery-item img{
+        width: 90%;
+    }
+    #gallery-11 .gallery-item{
+        float: none!important;
+    }
+    #sidebar_wrapper{
+        display: none;
+    }
+    #content .gallery{
+        display: table;
+    }
+    #post-7437 > header > h1 {
+        font-size: 15px;
+        padding: 0;
+    }
+}
+@media (max-width : 640px){
+    #habla_panel_div {
+        display: none!important;
+    }
+
+}
+@media (max-width : 768px){
+    #socialIconsWrap{
+        width: 243px!important;
+    }  
+    #content div, #content table{
+        max-width: none!important;        
+        padding-bottom: 0.5em;
+    }
+    #second.widget-area {
+        text-align: center;
+    }
+    #content img{
+        max-width: 100%!important;            
+    }
+    #dcssb-float {
+        left:0px!important;
+    }
+
+}
+@media (max-width : 979px){
+    #socialIconsWrap{
+        width: 243px!important;
+    }  
+}
+@media (max-width : 1024px){
+
+}
+.speakers-content li {
+box-sizing:border-box;
+-moz-box-sizing: border-box;
+-webkit-box-sizing: border-box;
+  padding: 5px;
+}
+
+/* ===== LBA Custom ===== */
+
+/* To fix the header */
+@media screen and (max-width: 320px) {
+  .logo {
+    display: inline-block;
+  }
+  .login-top {
+    float: none;
+    margin-top: 10px;
+  }
+  #logo-img {
+    float: none;
+    margin: 0 auto;
+    padding: 0;
+  }
+  #menu-controls {
+    float: none;
+    padding-bottom: 0;
+    margin-bottom: 0;
+    text-align: center;
+  }
+  #menu-controls li {
+    border: none;
+    display: inline-block;
+    float: none;
+    margin: 0;
+    padding: 0;    
+  }
+  #menu-item-14790 {
+    border-right: 2px solid black !important;
+    padding-right: 5px !important;
+  }
+  #menu-login {
+    padding-top: 0;
+    margin-top: 0;
+  }
+}
