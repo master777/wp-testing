@@ -1,5 +1,12 @@
 # Wordpress
+wp-config.php
+wp-content/upgrade/*
 wp-content/uploads/*
+wp-content/plugins/hello.php
+wp-content/debug.log
+/readme.html
+/readme_wp.html
+/license.txt
 
 # Windows
 Thumbs.db
